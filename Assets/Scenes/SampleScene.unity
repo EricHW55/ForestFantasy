@@ -14,8 +14,8 @@ OcclusionCullingSettings:
 RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 9
-  m_Fog: 1
-  m_FogColor: {r: 0.46337664, g: 0.5693614, b: 0.8396226, a: 1}
+  m_Fog: 0
+  m_FogColor: {r: 0.5061855, g: 0.6052713, b: 0.8584906, a: 1}
   m_FogMode: 3
   m_FogDensity: 0.01
   m_LinearFogStart: 0
@@ -427,15 +427,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30fe771b56726fb478ae7c43d3e3dacb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  grassDetailTexture: {fileID: 0}
-  flowerDetailTexture: {fileID: 0}
-  grassMaxDensity: 16
-  flowerMaxDensity: 6
-  maxSlope01: 0.35
-  maxHeight01: 0.75
-  noiseScale: 8
-  featureModule: {fileID: 0}
-  rockMaskBlock: 1
+  forceDetailResolution: 1
+  detailResolution: 1024
+  detailResolutionPerPatch: 16
+  featureModule: {fileID: 793008218}
+  usePrefabAlbedoAsPrototypeTexture: 1
+  autoTintFromPrefabMaterialColor: 1
+  forcePrefabRenderModeVertexLit: 1
+  preferTextureWhenProvided: 1
+  logPrefabExtraction: 1
+  rules: []
 --- !u!114 &793008215
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -469,6 +470,8 @@ MonoBehaviour:
   treePrefabs:
   - {fileID: 1148613061152340, guid: eded051879df4c147b9010199d240258, type: 3}
   - {fileID: 919132149155446097, guid: 00ada2d395936fe4089b5fcb2f519b95, type: 3}
+  - {fileID: 4570594112744518023, guid: f33ad934dfd440e4c96b0ca0f308ee97, type: 3}
+  - {fileID: 3292778667535117986, guid: a043556d7205f99439bbb888232fbc9a, type: 3}
   treeCount: 4000
   minHeight01: 0.05
   maxHeight01: 0.75
@@ -485,14 +488,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3081af0ee57d45c43a8d664b7730fa8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  grassLayer: {fileID: 8574412962073106934, guid: 196d6e243c8556049bd243c17fd9dbf4,
+  grassLayer: {fileID: 8574412962073106934, guid: 6030d4ecea42c4a4a8df94e0e7854f90,
     type: 2}
-  dirtLayer: {fileID: 8574412962073106934, guid: 39a6ee106203046469782f4caa9a24ad,
+  dirtLayer: {fileID: 8574412962073106934, guid: a7432bd6cfc4e4f4a9208f180f0a7f36,
     type: 2}
-  rockLayer: {fileID: 8574412962073106934, guid: a1aaab63c93e82a4cb7323d017ec2e26,
+  rockLayer: {fileID: 8574412962073106934, guid: 3e95f0de195aa9d47a801a3cec488555,
     type: 2}
   snowLayer: {fileID: 0}
-  featureModule: {fileID: 0}
+  featureModule: {fileID: 793008218}
   featureRockBoost: 1
   featureRockMin01: 0.15
   snowStart01: 0.72
@@ -503,6 +506,24 @@ MonoBehaviour:
   dirtSlopeEnd01: 0.45
   noiseScale: 5
   noiseStrength: 0.25
+  dirtMacroScale: 0.6
+  dirtMacroMix: 0.45
+  dirtPatchScale: 4
+  dirtPatchCoverage: 0.35
+  dirtPatchStrength: 0.85
+  dirtPatchSharpness: 0.85
+  dirtMaskBoost: 1.2
+  dirtSlopeBlend: 0.05
+  dirtPatchSlopePenalty: 0
+  dirtPatchEdgeWarp: 0.35
+  dirtRegionScale: 0.25
+  dirtCoverageMinMultiplier: 0.9
+  dirtCoverageMaxMultiplier: 1.2
+  dirtRegionContrast: 1
+  dirtStrengthRandomMin: 0.5
+  dirtStrengthRandomMax: 1.35
+  dirtStrengthNoiseScale: 6
+  dirtMinVisibleWeight: 0.1
 --- !u!114 &793008218
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -592,6 +613,9 @@ MonoBehaviour:
     - {fileID: 919132149155446097, guid: a622235817abd68429dbbed4ed1d8ff1, type: 3}
     - {fileID: 919132149155446097, guid: b425921fa4ac27b40a9228c338761926, type: 3}
     - {fileID: 919132149155446097, guid: e607c9ea3a77c844db7c1a3f2d180ce1, type: 3}
+    - {fileID: 336222436434858099, guid: bc51859a359a6124d9240419fc73341a, type: 3}
+    - {fileID: 1562119382739742, guid: c07f24e35f07ce74ba43afa35d48adf7, type: 3}
+    - {fileID: 1220206043906976, guid: 86263e8355f96ba4ab9fdf4e96c2090f, type: 3}
     targetCount: 600
     spawnChance: 0.4
     triesMultiplier: 6
@@ -602,7 +626,46 @@ MonoBehaviour:
     alignToTerrainNormal: 1
     randomYaw: 1
     yOffset: -0.02
-    uniformScaleRange: {x: 0.6, y: 1.2}
+    uniformScaleRange: {x: 1, y: 1.2}
+    featureModule: {fileID: 0}
+    rockMaskMin01: 0.15
+    rockMaskChanceBoost: 1.5
+  - name: Lod
+    prefabs:
+    - {fileID: 1043896297628826, guid: 5a21074ccac8b1e40a90e2b16e16afa4, type: 3}
+    - {fileID: 1844832195497820, guid: ed5f82224b99b30438c4330a2dca3429, type: 3}
+    targetCount: 400
+    spawnChance: 0.3
+    triesMultiplier: 6
+    minHeight01: 0.04
+    maxHeight01: 0.75
+    maxSlope01: 0.6
+    minDistanceMeters: 2.2
+    alignToTerrainNormal: 1
+    randomYaw: 1
+    yOffset: -0.02
+    uniformScaleRange: {x: 1.2, y: 1.2}
+    featureModule: {fileID: 0}
+    rockMaskMin01: 0.15
+    rockMaskChanceBoost: 1.5
+  - name: Stone
+    prefabs:
+    - {fileID: 6995143996422936259, guid: 4effbb598921d434f8a5485874752215, type: 3}
+    - {fileID: 1970564158491392, guid: 8e8f8660f45621a4a804df622b985183, type: 3}
+    - {fileID: 4874367222305082774, guid: 9f1468c423fda7e4988d5a9473b17de1, type: 3}
+    - {fileID: 1600038145722832, guid: f36916143c7509543b1b8d40091baa24, type: 3}
+    - {fileID: 1957529895149934, guid: 5c11b6a454fa5fd458d541957f1de507, type: 3}
+    targetCount: 1000
+    spawnChance: 1
+    triesMultiplier: 12
+    minHeight01: 0.04
+    maxHeight01: 0.75
+    maxSlope01: 0.6
+    minDistanceMeters: 2.2
+    alignToTerrainNormal: 1
+    randomYaw: 1
+    yOffset: -0.01
+    uniformScaleRange: {x: 1.2, y: 1.2}
     featureModule: {fileID: 0}
     rockMaskMin01: 0.15
     rockMaskChanceBoost: 1.5
@@ -704,10 +767,10 @@ Terrain:
   serializedVersion: 6
   m_TerrainData: {fileID: 15600000, guid: 8c644448c9e24a6449e5a9e6939b39bc, type: 2}
   m_TreeDistance: 5000
-  m_TreeBillboardDistance: 50
+  m_TreeBillboardDistance: 300
   m_TreeCrossFadeLength: 5
   m_TreeMaximumFullLODCount: 50
-  m_DetailObjectDistance: 80
+  m_DetailObjectDistance: 400
   m_DetailObjectDensity: 1
   m_HeightmapPixelError: 5
   m_SplatMapDistance: 1000
