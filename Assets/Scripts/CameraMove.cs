@@ -1,63 +1,83 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class FollowPlayer : MonoBehaviour {
-    public GameObject player;
+public class FollowPlayer : MonoBehaviour
+{
+    [Header("Target")]
+    public Transform player;      // Inspector에 드래그 추천
+    public Vector3 headOffset = new Vector3(0f, 1.7f, 0f);
 
-    private bool view = false; // 3인칭 시점
+    [Header("View")]
+    public bool thirdPerson = true;
+    public float distance = 4f;
+    public float thirdPersonHeight = 1.2f;
 
-    private Vector3 cameraDir; // 3인칭 카메라 위치
-    private float cameraLen = 3f; // 3인칭 카메라 거리 
-    private float mincameraLen;
-    private float mouseSpeed = PlayerMove.mouseSpeed;
-    private float mouseX = 0.0f; // 좌 우 회전
-    private float mouseY = 0.0f; // 위 아래 회전
+    [Header("Look")]
+    public float mouseSensitivityY = 2.0f;
+    public float minPitch = -50f;
+    public float maxPitch = 50f;
 
+    [Header("Smoothing")]
+    public float smoothTime = 0.06f;
 
-    private void mouseRotate() {
-        mouseX += Input.GetAxis("Mouse X") * mouseSpeed * Time.deltaTime;
-        mouseY += Input.GetAxis("Mouse Y") * mouseSpeed * Time.deltaTime;
-        // mouseY = Mathf.Clamp(mouseY, -50f, 30f);
-        mouseY = Mathf.Clamp(mouseY, -50.0f, 50.0f);
+    private float pitch;
+    private Vector3 smoothVel;
 
-        this.transform.localEulerAngles = new Vector3(-mouseY, mouseX, 0);
+    void Start()
+    {
+        if (player == null)
+        {
+            var go = GameObject.FindWithTag("Player");
+            if (go != null) player = go.transform;
+        }
+
+        if (player == null)
+        {
+            Debug.LogError("[FollowPlayer] Player를 못 찾았어. Player 태그를 달거나 Inspector에 할당해줘.");
+            enabled = false;
+            return;
+        }
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.V))
+            thirdPerson = !thirdPerson;
 
-    // Start is called before the first frame update
-    void Start() {
-        player = GameObject.FindWithTag("Player"); // Player 태그 찾기
+        // Mouse Y only -> pitch
+        pitch -= Input.GetAxis("Mouse Y") * mouseSensitivityY;
+        pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
     }
 
-    // Update is called once per frame
-    void Update() {
-        if (Input.GetKeyDown(KeyCode.V)) view = !view;
+    void LateUpdate()
+    {
+        if (player == null) return;
 
-        // transform.position = player.transform.position;
-        // transform.forward = player.transform.forward;
+        float yaw = player.eulerAngles.y;
+        Quaternion rot = Quaternion.Euler(pitch, yaw, 0f);
 
-        mouseRotate();
-
-        if (view)  {
-            cameraDir = new Vector3(
-                player.transform.position.x + cameraLen * Mathf.Sin(-mouseX * Mathf.Deg2Rad), 
-                player.transform.position.y + cameraLen, 
-                player.transform.position.z - cameraLen * Mathf.Cos(-mouseX * Mathf.Deg2Rad)
-                );
-
-            /*
-            Ray ray = new Ray(transform.position, -transform.forward);
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit, cameraLen)) {
-                cameraDir = hit.point;
-            }
-            */
-
-            transform.position = cameraDir; // 3인칭 시점
+        Vector3 desiredPos;
+        if (thirdPerson)
+        {
+            // 플레이어 뒤쪽 + 위쪽
+            desiredPos = player.position
+                       + Vector3.up * thirdPersonHeight
+                       + (rot * new Vector3(0f, 0f, -distance));
         }
-        else {
-            transform.position = new Vector3(player.transform.position.x, player.transform.position.y + 1.8f, player.transform.position.z); // 1인칭 시점
+        else
+        {
+            // 1인칭(머리 위치)
+            desiredPos = player.position + headOffset;
         }
+
+        transform.position = Vector3.SmoothDamp(transform.position, desiredPos, ref smoothVel, smoothTime);
+
+        // 바라보는 방향
+        if (thirdPerson)
+            transform.rotation = rot;          // 3인칭: pitch+yaw 그대로
+        else
+            transform.rotation = rot;          // 1인칭도 동일 (필요하면 roll 0 유지)
     }
 }

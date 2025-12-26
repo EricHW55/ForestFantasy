@@ -272,7 +272,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 949c65fdd8d711d4eb51832492bc30df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
+  player: {fileID: 1363468254}
+  headOffset: {x: 0, y: 1.7, z: 0}
+  thirdPerson: 1
+  distance: 4
+  thirdPersonHeight: 1.2
+  mouseSensitivityY: 2
+  minPitch: -50
+  maxPitch: 50
+  smoothTime: 0.06
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -718,6 +726,255 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1039938811
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1039938813}
+  - component: {fileID: 1039938812}
+  m_Layer: 0
+  m_Name: NearSpawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1039938812
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1039938811}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a5b83c6090fe3e4cbcd6e61da5598f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 330585546}
+  spawnRadius: 70
+  despawnRadius: 85
+  chunkSize: 16
+  maxNewChunksPerFrame: 2
+  useTerrainGenManagerSeed: 1
+  seedOverride: 12345
+  rules:
+  - name: Base Grass
+    prefabs:
+    - {fileID: 8812584711120714047, guid: 91d8d8ad5c541394c80f7cc7e1fd253b, type: 3}
+    - {fileID: 7045990119674233780, guid: 8e20bb73d6781f047a846b8e13553d15, type: 3}
+    - {fileID: 2022498996388788194, guid: ea784f90c6a294d4c943e54ce9184fb2, type: 3}
+    - {fileID: 5982839853698224172, guid: c00784b589bee494b831054cc54dbf7b, type: 3}
+    - {fileID: 5136093097968943653, guid: 5b0f1568669869047a7a124bd3c0dd48, type: 3}
+    targetCountPerChunk: 350
+    spawnChance: 1
+    triesMultiplier: 14
+    minHeight01: 0
+    maxHeight01: 1
+    maxSlope01: 0.8
+    minDistance: 0.25
+    alignToTerrainNormal: 1
+    randomYaw: 1
+    yOffset: -0.02
+    uniformScaleRange: {x: 1, y: 1.4}
+    macroNoiseScale: 0.015
+    macroThreshold: 0.35
+    macroSharpness: 2.5
+    microNoiseScale: 0.12
+    microSharpness: 1.5
+  - name: Grass Clumps
+    prefabs:
+    - {fileID: 8812584711120714047, guid: 91d8d8ad5c541394c80f7cc7e1fd253b, type: 3}
+    - {fileID: 7045990119674233780, guid: 8e20bb73d6781f047a846b8e13553d15, type: 3}
+    - {fileID: 2022498996388788194, guid: ea784f90c6a294d4c943e54ce9184fb2, type: 3}
+    - {fileID: 5982839853698224172, guid: c00784b589bee494b831054cc54dbf7b, type: 3}
+    - {fileID: 5136093097968943653, guid: 5b0f1568669869047a7a124bd3c0dd48, type: 3}
+    targetCountPerChunk: 450
+    spawnChance: 0.65
+    triesMultiplier: 12
+    minHeight01: 0
+    maxHeight01: 1
+    maxSlope01: 0.8
+    minDistance: 0.12
+    alignToTerrainNormal: 1
+    randomYaw: 1
+    yOffset: -0.02
+    uniformScaleRange: {x: 1, y: 1.4}
+    macroNoiseScale: 0.009
+    macroThreshold: 0.55
+    macroSharpness: 8
+    microNoiseScale: 0.19
+    microSharpness: 3
+--- !u!4 &1039938813
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1039938811}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 596.7306, y: -649.88794, z: 641.29407}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1363468248
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1363468254}
+  - component: {fileID: 1363468253}
+  - component: {fileID: 1363468252}
+  - component: {fileID: 1363468251}
+  - component: {fileID: 1363468250}
+  - component: {fileID: 1363468249}
+  m_Layer: 0
+  m_Name: Cube
+  m_TagString: Player
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1363468249
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1363468248}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 649ec23fa3455664faafa5ce1cbb13ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 5
+  sprintMultiplier: 1.6
+  slowMultiplier: 0.6
+  jumpHeight: 1.2
+  gravity: -9.81
+  mouseSensitivity: 2
+--- !u!143 &1363468250
+CharacterController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1363468248}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Height: 1
+  m_Radius: 0.5
+  m_SlopeLimit: 45
+  m_StepOffset: 0.3
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!65 &1363468251
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1363468248}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!23 &1363468252
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1363468248}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &1363468253
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1363468248}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &1363468254
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1363468248}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 182.6506, y: 100, z: 663.8912}
+  m_LocalScale: {x: 1, y: 2, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2037502295
 GameObject:
   m_ObjectHideFlags: 0
@@ -820,3 +1077,5 @@ SceneRoots:
   - {fileID: 832575519}
   - {fileID: 2037502298}
   - {fileID: 793008221}
+  - {fileID: 1039938813}
+  - {fileID: 1363468254}
