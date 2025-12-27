@@ -2573,7 +2573,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2550775017897747638}
   - component: {fileID: -2026960549638157027}
-  - component: {fileID: 2275159291530841615}
+  - component: {fileID: 2305592819226467995}
   m_Layer: 0
   m_Name: Imp Brown
   m_TagString: Untagged
@@ -2651,7 +2651,7 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &2275159291530841615
+--- !u!114 &2305592819226467995
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2664,13 +2664,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   terrain: {fileID: 0}
+  terrainRoot: {fileID: 0}
   animator: {fileID: 0}
+  playerTarget: {fileID: 0}
+  playerTag: Player
   moveSpeed: 2
   turnSpeed: 360
   wanderRadius: 10
-  arriveDist: 0.6
+  arriveDist: 0.8
   repathInterval: 3
+  detectRadius: 18
+  chaseSpeed: 6
+  attackRadius: 2.6
+  attackCooldown: 1.2
+  faceTargetWhenAttacking: 1
   yOffset: 0.02
+  speedParam: Speed
+  attack1Trigger: Attack1
+  attack2Trigger: Attack2
+  attackFallbackTrigger: Attack
 --- !u!1 &2904760353170181263
 GameObject:
   m_ObjectHideFlags: 0

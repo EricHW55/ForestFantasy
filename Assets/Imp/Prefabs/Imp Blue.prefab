@@ -6072,7 +6072,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6768212347281410194}
   - component: {fileID: 1771113206757024232}
-  - component: {fileID: 6370355967098563008}
+  - component: {fileID: 5442637710688662701}
   m_Layer: 0
   m_Name: Imp Blue
   m_TagString: Untagged
@@ -6150,7 +6150,7 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &6370355967098563008
+--- !u!114 &5442637710688662701
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -6163,13 +6163,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   terrain: {fileID: 0}
+  terrainRoot: {fileID: 0}
   animator: {fileID: 0}
+  playerTarget: {fileID: 0}
+  playerTag: Player
   moveSpeed: 2
   turnSpeed: 360
   wanderRadius: 10
-  arriveDist: 0.6
+  arriveDist: 0.8
   repathInterval: 3
+  detectRadius: 18
+  chaseSpeed: 6
+  attackRadius: 2.6
+  attackCooldown: 1.2
+  faceTargetWhenAttacking: 1
   yOffset: 0.02
+  speedParam: Speed
+  attack1Trigger: Attack1
+  attack2Trigger: Attack2
+  attackFallbackTrigger: Attack
 --- !u!1 &6252229104833896619
 GameObject:
   m_ObjectHideFlags: 0
