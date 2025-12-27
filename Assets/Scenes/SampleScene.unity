@@ -399,6 +399,37 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 1
+--- !u!1 &665971562
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 665971563}
+  m_Layer: 0
+  m_Name: Mobs_Root
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &665971563
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 665971562}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 314.80325, y: 66.83384, z: 307.20856}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &793008213
 GameObject:
   m_ObjectHideFlags: 0
@@ -416,6 +447,7 @@ GameObject:
   - component: {fileID: 793008215}
   - component: {fileID: 793008214}
   - component: {fileID: 793008222}
+  - component: {fileID: 793008223}
   m_Layer: 0
   m_Name: MapGenerator
   m_TagString: Untagged
@@ -677,6 +709,38 @@ MonoBehaviour:
     featureModule: {fileID: 0}
     rockMaskMin01: 0.15
     rockMaskChanceBoost: 1.5
+--- !u!114 &793008223
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 793008213}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8262430d5e392d849b3b394f1c8daec8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mobPrefabs:
+  - {fileID: 6243772395542237736, guid: 47d8165626b41a243b1a0222655960b7, type: 3}
+  - {fileID: 2895248250188348940, guid: fe549c3ae3ca39d4f82ccae00eafc008, type: 3}
+  - {fileID: 2970420324578064896, guid: fd132d79e14fc814f812e55ca7814262, type: 3}
+  spawnedRoot: {fileID: 665971563}
+  spawnedRootName: Mobs_Root
+  parentRootToThisObject: 1
+  clearPrevious: 1
+  useWholeTerrain: 1
+  areaMinXZ: {x: 0, y: 0}
+  areaMaxXZ: {x: 100, y: 100}
+  minCount: 5
+  maxCount: 15
+  maxSlopeAngle: 35
+  minDistanceBetweenMobs: 3
+  maxTriesPerMob: 30
+  yOffset: 0.02
+  requireNavMesh: 0
+  navMeshSearchRadius: 2
+  seedOffset: 1337
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -953,7 +1017,67 @@ Transform:
   m_GameObject: {fileID: 1039938811}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 596.7306, y: -649.88794, z: 641.29407}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1227414523
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1227414525}
+  - component: {fileID: 1227414524}
+  m_Layer: 0
+  m_Name: MobSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1227414524
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1227414523}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b652a5548c43ccf4081148c46abc3589, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mobPrefabs:
+  - {fileID: 6243772395542237736, guid: 47d8165626b41a243b1a0222655960b7, type: 3}
+  - {fileID: 2895248250188348940, guid: fe549c3ae3ca39d4f82ccae00eafc008, type: 3}
+  - {fileID: 2970420324578064896, guid: fd132d79e14fc814f812e55ca7814262, type: 3}
+  terrain: {fileID: 2037502297}
+  useWholeTerrain: 1
+  areaMinXZ: {x: 0, y: 0}
+  areaMaxXZ: {x: 100, y: 100}
+  minCount: 5
+  maxCount: 15
+  maxSlopeAngle: 35
+  minDistanceBetweenMobs: 3
+  maxTriesPerMob: 30
+  useSeed: 1
+  seed: 12345
+  spawnedRoot: {fileID: 0}
+--- !u!4 &1227414525
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1227414523}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 10, y: 0, z: 10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1214,3 +1338,5 @@ SceneRoots:
   - {fileID: 793008221}
   - {fileID: 1039938813}
   - {fileID: 1363468254}
+  - {fileID: 1227414525}
+  - {fileID: 665971563}
