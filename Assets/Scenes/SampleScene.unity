@@ -775,12 +775,12 @@ MonoBehaviour:
     triesMultiplier: 14
     minHeight01: 0
     maxHeight01: 1
-    maxSlope01: 0.8
+    maxSlope01: 0.85
     minDistance: 0.25
     alignToTerrainNormal: 1
     randomYaw: 1
     yOffset: -0.02
-    uniformScaleRange: {x: 1, y: 1.4}
+    uniformScaleRange: {x: 0.8, y: 1.4}
     macroNoiseScale: 0.015
     macroThreshold: 0.35
     macroSharpness: 2.5
@@ -793,8 +793,8 @@ MonoBehaviour:
     - {fileID: 2022498996388788194, guid: ea784f90c6a294d4c943e54ce9184fb2, type: 3}
     - {fileID: 5982839853698224172, guid: c00784b589bee494b831054cc54dbf7b, type: 3}
     - {fileID: 5136093097968943653, guid: 5b0f1568669869047a7a124bd3c0dd48, type: 3}
-    targetCountPerChunk: 450
-    spawnChance: 0.65
+    targetCountPerChunk: 400
+    spawnChance: 0.75
     triesMultiplier: 12
     minHeight01: 0
     maxHeight01: 1
@@ -807,6 +807,141 @@ MonoBehaviour:
     macroNoiseScale: 0.009
     macroThreshold: 0.55
     macroSharpness: 8
+    microNoiseScale: 0.19
+    microSharpness: 3
+  - name: Base Bush/Fern
+    prefabs:
+    - {fileID: 3321783486682416297, guid: e6ee60cd48ca7fa478e3065e30330864, type: 3}
+    - {fileID: 6205237258745050536, guid: 0c7542f3d05c9a4468ea43aec782fdac, type: 3}
+    - {fileID: 4785413492924531132, guid: cfe991abfe1d8a34e90a8b8d50f9a61c, type: 3}
+    - {fileID: 7182954667185978330, guid: b33ce8376149eb040be6057eed2bd12f, type: 3}
+    - {fileID: 1202788212063637620, guid: eb2e3b1d2f96f724e97c8d931ec0d6fc, type: 3}
+    - {fileID: 3889244126477486128, guid: 5bc68b98108d78a418afb40cc75e2a81, type: 3}
+    - {fileID: 4967382707753389808, guid: 9e490e347b306724d8c373938da8ec5e, type: 3}
+    targetCountPerChunk: 50
+    spawnChance: 0.738
+    triesMultiplier: 10
+    minHeight01: 0
+    maxHeight01: 1
+    maxSlope01: 0.65
+    minDistance: 1
+    alignToTerrainNormal: 1
+    randomYaw: 1
+    yOffset: -0.02
+    uniformScaleRange: {x: 1, y: 1}
+    macroNoiseScale: 0.009
+    macroThreshold: 0.55
+    macroSharpness: 1.5
+    microNoiseScale: 0.19
+    microSharpness: 3
+  - name: Bush/Fern Clumps
+    prefabs:
+    - {fileID: 3321783486682416297, guid: e6ee60cd48ca7fa478e3065e30330864, type: 3}
+    - {fileID: 6205237258745050536, guid: 0c7542f3d05c9a4468ea43aec782fdac, type: 3}
+    - {fileID: 4785413492924531132, guid: cfe991abfe1d8a34e90a8b8d50f9a61c, type: 3}
+    - {fileID: 7182954667185978330, guid: b33ce8376149eb040be6057eed2bd12f, type: 3}
+    - {fileID: 1202788212063637620, guid: eb2e3b1d2f96f724e97c8d931ec0d6fc, type: 3}
+    - {fileID: 3889244126477486128, guid: 5bc68b98108d78a418afb40cc75e2a81, type: 3}
+    - {fileID: 4967382707753389808, guid: 9e490e347b306724d8c373938da8ec5e, type: 3}
+    targetCountPerChunk: 35
+    spawnChance: 0.55
+    triesMultiplier: 14
+    minHeight01: 0
+    maxHeight01: 1
+    maxSlope01: 0.5
+    minDistance: 0.5
+    alignToTerrainNormal: 1
+    randomYaw: 1
+    yOffset: -0.02
+    uniformScaleRange: {x: 1, y: 1}
+    macroNoiseScale: 0.009
+    macroThreshold: 0.7
+    macroSharpness: 3.5
+    microNoiseScale: 0.19
+    microSharpness: 3
+  - name: Base Flower
+    prefabs:
+    - {fileID: 1212246297705233334, guid: 30a878c1d1da97d42a456d77f72cca61, type: 3}
+    - {fileID: 2153456347341862418, guid: 7358ad30e7ab6be4b8cf21062d019675, type: 3}
+    - {fileID: 1223156714505594708, guid: 91367e40ea3f3ad4a90bbf1e7a32d9d1, type: 3}
+    - {fileID: 1973268181744308885, guid: ad737f18422ef564aa21b23aab39d274, type: 3}
+    - {fileID: 6590975227295379492, guid: 6f67d1c79c9b196459c5de7ea6ce6077, type: 3}
+    - {fileID: 1179445593872686852, guid: cd03a41894dab5e49abe8481b9a4a630, type: 3}
+    - {fileID: 7537165645186567766, guid: 0b6bd30c5d303194db3c59feae69ab39, type: 3}
+    - {fileID: 4522537107456461547, guid: 7f72c76c87dff5149967072a8aabddef, type: 3}
+    - {fileID: 1034637672061153995, guid: ea732816104f9474d83cbe0dbb7c4258, type: 3}
+    - {fileID: 2701850113685488679, guid: 296cd3b7478d68a4eaa772d9fd3ab3ed, type: 3}
+    - {fileID: 2597305830255750082, guid: d795a570d77409c4e8f64d728f66a677, type: 3}
+    - {fileID: 2631127626581351435, guid: 0e418186bde4c6d4ab2d787c4e5346db, type: 3}
+    - {fileID: 5499762887172653228, guid: 355d74e3c834ddd4eac4b870d06f78e2, type: 3}
+    targetCountPerChunk: 6
+    spawnChance: 0.45
+    triesMultiplier: 10
+    minHeight01: 0
+    maxHeight01: 1
+    maxSlope01: 0.45
+    minDistance: 4
+    alignToTerrainNormal: 1
+    randomYaw: 1
+    yOffset: -0.02
+    uniformScaleRange: {x: 1, y: 1}
+    macroNoiseScale: 0.009
+    macroThreshold: 0.45
+    macroSharpness: 1.2
+    microNoiseScale: 0.19
+    microSharpness: 3
+  - name: Flower Clusters
+    prefabs:
+    - {fileID: 1212246297705233334, guid: 30a878c1d1da97d42a456d77f72cca61, type: 3}
+    - {fileID: 2153456347341862418, guid: 7358ad30e7ab6be4b8cf21062d019675, type: 3}
+    - {fileID: 1223156714505594708, guid: 91367e40ea3f3ad4a90bbf1e7a32d9d1, type: 3}
+    - {fileID: 1973268181744308885, guid: ad737f18422ef564aa21b23aab39d274, type: 3}
+    - {fileID: 6590975227295379492, guid: 6f67d1c79c9b196459c5de7ea6ce6077, type: 3}
+    - {fileID: 1179445593872686852, guid: cd03a41894dab5e49abe8481b9a4a630, type: 3}
+    - {fileID: 7537165645186567766, guid: 0b6bd30c5d303194db3c59feae69ab39, type: 3}
+    - {fileID: 4522537107456461547, guid: 7f72c76c87dff5149967072a8aabddef, type: 3}
+    - {fileID: 1034637672061153995, guid: ea732816104f9474d83cbe0dbb7c4258, type: 3}
+    - {fileID: 2701850113685488679, guid: 296cd3b7478d68a4eaa772d9fd3ab3ed, type: 3}
+    - {fileID: 2597305830255750082, guid: d795a570d77409c4e8f64d728f66a677, type: 3}
+    - {fileID: 2631127626581351435, guid: 0e418186bde4c6d4ab2d787c4e5346db, type: 3}
+    - {fileID: 5499762887172653228, guid: 355d74e3c834ddd4eac4b870d06f78e2, type: 3}
+    targetCountPerChunk: 25
+    spawnChance: 0.4
+    triesMultiplier: 20
+    minHeight01: 0
+    maxHeight01: 1
+    maxSlope01: 0.45
+    minDistance: 1.2
+    alignToTerrainNormal: 1
+    randomYaw: 1
+    yOffset: -0.02
+    uniformScaleRange: {x: 1, y: 1}
+    macroNoiseScale: 0.009
+    macroThreshold: 0.85
+    macroSharpness: 6
+    microNoiseScale: 0.19
+    microSharpness: 3
+  - name: Mushrooms
+    prefabs:
+    - {fileID: 1031654717077781723, guid: 33610b12665a8ba4ba227a51bf5ff3c2, type: 3}
+    - {fileID: 2357403118300381098, guid: 4c2012bc51015e8438152a82f7d7dc32, type: 3}
+    - {fileID: 5060596682829054874, guid: 1ceaf06647257394f8d75a1759c6be00, type: 3}
+    - {fileID: 6514988474726489682, guid: f8b92e99d9eca054e95b618e5ed82ea9, type: 3}
+    - {fileID: 5121261594680611611, guid: 8f71c65da202a1548a8734589db5f6fa, type: 3}
+    targetCountPerChunk: 5
+    spawnChance: 0.3
+    triesMultiplier: 20
+    minHeight01: 0
+    maxHeight01: 1
+    maxSlope01: 0.38
+    minDistance: 3.5
+    alignToTerrainNormal: 1
+    randomYaw: 1
+    yOffset: -0.02
+    uniformScaleRange: {x: 1, y: 1}
+    macroNoiseScale: 0.009
+    macroThreshold: 0.85
+    macroSharpness: 5
     microNoiseScale: 0.19
     microSharpness: 3
 --- !u!4 &1039938813
