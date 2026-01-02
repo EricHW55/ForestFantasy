@@ -3,291 +3,401 @@ using UnityEngine;
 public class ImpWander : MonoBehaviour
 {
     [Header("Refs")]
-    [Tooltip("Terrain 컴포넌트를 직접 넣어도 되고, 비우면 자동으로 찾습니다.")]
-    public Terrain terrain;
-
-    [Tooltip("Map 같은 루트 오브젝트를 넣으면 자식에서 Terrain을 찾아 사용합니다.")]
-    public GameObject terrainRoot;
-
-    [Tooltip("비워두면 GetComponentInChildren<Animator>()로 자동으로 찾음")]
-    public Animator animator;
-
-    [Header("Player (optional)")]
-    public Transform playerTarget;
+    public Terrain terrain;              // 비워도 됨(자동 탐색)
+    public GameObject terrainRoot;        // Map 같은 부모 오브젝트 넣고 싶으면 여기에
+    public Animator animator;             // 비워도 GetComponent로 잡음
+    public Transform playerTarget;        // 비워도 tag로 자동 탐색
     public string playerTag = "Player";
 
     [Header("Wander")]
-    public float moveSpeed = 2.0f;
-    public float turnSpeed = 360f;
     public float wanderRadius = 10f;
-    public float arriveDist = 0.8f;
-    public float repathInterval = 3.0f;
+    public float repathInterval = 3f;
+    public float arriveDist = 0.6f;
+    public float wanderSpeed = 2.0f;
+    public float wanderAcceleration = 6f;
 
-    [Header("Chase/Attack")]
-    [Tooltip("플레이어 인식 반경(늘려달라 해서 기본값 상향)")]
-    public float detectRadius = 18f;
+    [Header("Detect / Chase")]
+    public float detectRadius = 25f;      // 인식 사거리 (늘림)
+    public float loseRadius = 35f;        // 추격 유지 사거리(히스테리시스)
+    public float chaseSpeed = 6.5f;       // 추격 속도(늘림)
+    public float chaseAcceleration = 14f; // 가속도(늘림)
+    public float turnSpeed = 360f;
 
-    [Tooltip("추격 시 이동 속도(늘려달라 해서 기본값 상향)")]
-    public float chaseSpeed = 6.0f;
-
-    [Tooltip("공격 시작 거리(너무 딱 붙지 않게 조금 넉넉히)")]
-    public float attackRadius = 2.6f;
-
-    [Tooltip("공격 간격(초)")]
+    [Header("Attack (distance)")]
+    public float attackStopRadius = 2.4f;   // 여기선 더 가까이 안 감(정지 거리)
+    public float attackStartRadius = 2.9f;  // 이 안이면 공격 시작
+    public float attackHitRadius = 3.2f;    // 데미지 판정 거리(조금 더 여유)
+    public int attackDamage = 10;           // ✅ 없어서 에러났던 변수
     public float attackCooldown = 1.2f;
-
-    [Tooltip("공격할 때도 플레이어를 바라보게")]
-    public bool faceTargetWhenAttacking = true;
+    public float attackHitDelay = 0.25f;    // 공격 모션 중 “맞는 타이밍”
+    public float attackRecoverTime = 0.35f; // 후딜
 
     [Header("Ground")]
+    public LayerMask groundMask = ~0;
     public float yOffset = 0.02f;
 
     [Header("Animator Params")]
-    public string speedParam = "Speed";      // 0=idle, 1=walk, 2=run
-    public string attack1Trigger = "Attack1";
-    public string attack2Trigger = "Attack2";
-    public string attackFallbackTrigger = "Attack"; // 없으면 무시
+    public string speedParam = "Speed";         // float (0~1 권장)
+    public string isChasingParam = "IsChasing"; // bool
+    public string attack1Trigger = "Attack1";   // trigger
+    public string attack2Trigger = "Attack2";   // trigger
 
-    private Vector3 _target;
-    private float _nextRepathTime;
+    [Header("Animator Speed")]
+    public bool driveAnimatorSpeed = true;
+    public float walkAnimSpeed = 1.15f;
+    public float runAnimSpeed = 1.85f;
+    public float attackAnimSpeed = 1.15f;
 
-    private float _nextAttackTime;
-    private int _attackFlip; // 0/1 번갈아
+    [Header("Failsafe")]
+    public bool forceCrossFadeToIdleAfterAttack = true;
+    public string idleStateName = "Idle";
 
-    private enum State { Wander, Chase, Attack }
-    private State _state = State.Wander;
+    enum State { Wander, Chase, Attack }
+    State _state = State.Wander;
 
-    private bool _hasSpeed;
-    private bool _hasAtk1;
-    private bool _hasAtk2;
-    private bool _hasAtkFallback;
+    Vector3 _wanderTarget;
+    float _nextRepathTime;
+
+    float _curSpeed;
+
+    // attack runtime
+    bool _attackInProgress;
+    bool _damageApplied;
+    float _attackHitTime;
+    float _attackEndTime;
+    float _nextAttackReadyTime;
+    int _attackFlip;
+
+    // cached animator param existence
+    bool _hasSpeed, _hasChasing, _hasAtk1, _hasAtk2;
 
     void Awake()
     {
-        if (animator == null) animator = GetComponentInChildren<Animator>();
-
-        CacheAnimatorParams();
-
-        // Player 자동 (태그 기반)
-        if (playerTarget == null && !string.IsNullOrEmpty(playerTag))
-        {
-            var go = GameObject.FindGameObjectWithTag(playerTag);
-            if (go != null) playerTarget = go.transform;
-        }
-
+        if (!animator) animator = GetComponentInChildren<Animator>();
         ResolveTerrain();
-        PickNewTarget();
-        _nextRepathTime = Time.time + repathInterval;
-        _nextAttackTime = Time.time;
+        CacheAnimatorParams();
+        PickNewWanderTarget();
     }
 
     void Update()
     {
+        ResolvePlayerTarget();
         ResolveTerrain();
-        if (terrain == null) return;
 
-        UpdateState();
+        UpdateStateMachine();
 
-        switch (_state)
-        {
-            case State.Attack:
-                DoAttack();
-                break;
+        if (_state == State.Wander) DoWander();
+        else if (_state == State.Chase) DoChase();
+        else DoAttack();
 
-            case State.Chase:
-                _target = playerTarget != null ? playerTarget.position : _target;
-                DoMove(chaseSpeed, speedValue: 2f, stopAtAttackRadius: true);
-                break;
-
-            default:
-                // Wander
-                if (Time.time >= _nextRepathTime)
-                {
-                    _nextRepathTime = Time.time + repathInterval;
-                    PickNewTarget();
-                }
-                DoMove(moveSpeed, speedValue: 1f, stopAtAttackRadius: false);
-                break;
-        }
-
-        SnapToTerrain();
+        StickToGround();
+        UpdateAnimatorParams();
     }
 
-    void UpdateState()
+    void ResolvePlayerTarget()
     {
-        if (playerTarget == null)
+        if (playerTarget) return;
+        if (string.IsNullOrEmpty(playerTag)) return;
+
+        var go = GameObject.FindGameObjectWithTag(playerTag);
+        if (go) playerTarget = go.transform;
+    }
+
+    void UpdateStateMachine()
+    {
+        if (!playerTarget)
         {
-            _state = State.Wander;
+            if (_state != State.Attack) _state = State.Wander;
             return;
         }
 
-        float d = Vector3.Distance(Flat(transform.position), Flat(playerTarget.position));
+        float d = FlatDistance(transform.position, playerTarget.position);
 
-        if (d <= attackRadius) _state = State.Attack;
-        else if (d <= detectRadius) _state = State.Chase;
-        else _state = State.Wander;
+        // 공격 중이면 DoAttack에서 관리
+        if (_state == State.Attack) return;
+
+        // 공격 시작 조건
+        if (d <= attackStartRadius && Time.time >= _nextAttackReadyTime)
+        {
+            _state = State.Attack;
+            StartAttackTimers();
+            FireAttackTrigger();
+            return;
+        }
+
+        // 추격/배회 스위치
+        if (_state == State.Chase)
+            _state = (d > loseRadius) ? State.Wander : State.Chase;
+        else
+            _state = (d <= detectRadius) ? State.Chase : State.Wander;
+    }
+
+    void DoWander()
+    {
+        if (Time.time >= _nextRepathTime)
+        {
+            _nextRepathTime = Time.time + repathInterval;
+            PickNewWanderTarget();
+        }
+
+        MoveTowards(_wanderTarget, wanderSpeed, wanderAcceleration, stopAtDistance: arriveDist);
+    }
+
+    void DoChase()
+    {
+        if (!playerTarget) { _state = State.Wander; return; }
+
+        float d = FlatDistance(transform.position, playerTarget.position);
+
+        // 너무 붙으면 멈춰서 거리 유지(비비기 방지)
+        if (d <= attackStopRadius)
+        {
+            _curSpeed = Mathf.MoveTowards(_curSpeed, 0f, chaseAcceleration * Time.deltaTime);
+            FaceTarget(playerTarget.position);
+            return;
+        }
+
+        MoveTowards(playerTarget.position, chaseSpeed, chaseAcceleration, stopAtDistance: attackStopRadius);
     }
 
     void DoAttack()
     {
-        // 공격 중엔 이동 멈춤 + 애니 speed 0
-        SetAnimSpeed(0f);
+        // 공격 중엔 이동 정지
+        _curSpeed = Mathf.MoveTowards(_curSpeed, 0f, (wanderAcceleration + chaseAcceleration) * Time.deltaTime);
 
-        if (playerTarget != null && faceTargetWhenAttacking)
+        if (!playerTarget)
         {
-            Vector3 to = playerTarget.position - transform.position;
-            to.y = 0f;
-            if (to.sqrMagnitude > 0.0001f)
-            {
-                Quaternion targetRot = Quaternion.LookRotation(to.normalized, Vector3.up);
-                transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRot, turnSpeed * Time.deltaTime);
-            }
+            EndAttackIfNeeded();
+            _state = State.Wander;
+            return;
         }
 
-        // ⭐ 핵심: 트리거를 매 프레임 쏘지 말고 쿨타임마다 한 번만!
-        if (Time.time < _nextAttackTime) return;
-        _nextAttackTime = Time.time + attackCooldown;
+        FaceTarget(playerTarget.position);
 
-        // Attack1/Attack2 있으면 번갈아 or 랜덤
+        // 타이밍에 맞춰 1회 데미지
+        if (_attackInProgress)
+        {
+            if (!_damageApplied && Time.time >= _attackHitTime)
+            {
+                _damageApplied = true;
+                TryApplyDamage();
+            }
+
+            if (Time.time >= _attackEndTime)
+            {
+                EndAttackIfNeeded();
+                // 공격 끝나면 다시 상황 판단
+                _state = State.Chase;
+            }
+        }
+    }
+
+    void StartAttackTimers()
+    {
+        _attackInProgress = true;
+        _damageApplied = false;
+
+        _nextAttackReadyTime = Time.time + attackCooldown;
+        _attackHitTime = Time.time + attackHitDelay;
+        _attackEndTime = _attackHitTime + attackRecoverTime;
+    }
+
+    void FireAttackTrigger()
+    {
+        if (!animator) return;
+
         if (_hasAtk1 && _hasAtk2)
         {
             _attackFlip ^= 1;
             if (_attackFlip == 0) animator.SetTrigger(attack1Trigger);
             else animator.SetTrigger(attack2Trigger);
         }
-        else if (_hasAtk1)
-        {
-            animator.SetTrigger(attack1Trigger);
-        }
-        else if (_hasAtk2)
-        {
-            animator.SetTrigger(attack2Trigger);
-        }
-        else if (_hasAtkFallback)
-        {
-            animator.SetTrigger(attackFallbackTrigger);
-        }
-        // 없으면 그냥 멈춰있기만 함(Animator 설정이 아직 덜 된 상태)
+        else if (_hasAtk1) animator.SetTrigger(attack1Trigger);
+        else if (_hasAtk2) animator.SetTrigger(attack2Trigger);
     }
 
-    void DoMove(float curSpeed, float speedValue, bool stopAtAttackRadius)
+    void TryApplyDamage()
+    {
+        if (!playerTarget) return;
+
+        float d = FlatDistance(transform.position, playerTarget.position);
+        if (d > attackHitRadius) return;
+
+        // IDamageable(=Health 포함) 우선
+        var dmg = playerTarget.GetComponentInParent<IDamageable>();
+        if (dmg != null)
+        {
+            dmg.TakeDamage(attackDamage);
+            return;
+        }
+
+        // 혹시 인터페이스 안 쓸 때 대비
+        var hp = playerTarget.GetComponentInParent<Health>();
+        if (hp != null) hp.TakeDamage(attackDamage);
+    }
+
+    void EndAttackIfNeeded()
+    {
+        _attackInProgress = false;
+        _damageApplied = false;
+
+        // Animator에 Attack -> Idle 복귀가 없으면 “멈춤” 방지용 안전장치
+        if (forceCrossFadeToIdleAfterAttack && animator && !string.IsNullOrEmpty(idleStateName))
+            animator.CrossFade(idleStateName, 0.05f);
+    }
+
+    void MoveTowards(Vector3 worldTarget, float maxSpeed, float accel, float stopAtDistance)
     {
         Vector3 pos = transform.position;
-
-        // (공격 거리에서) 너무 딱 붙는 걸 막기 위해, Chase일 땐 attackRadius 안으로 더 파고들지 않게
-        if (stopAtAttackRadius && playerTarget != null)
-        {
-            float d = Vector3.Distance(Flat(pos), Flat(playerTarget.position));
-            if (d <= attackRadius)
-            {
-                SetAnimSpeed(0f);
-                return;
-            }
-        }
-
-        Vector3 to = _target - pos;
+        Vector3 to = worldTarget - pos;
         to.y = 0f;
+
         float dist = to.magnitude;
 
-        if (dist > arriveDist)
+        if (dist <= stopAtDistance)
         {
-            Vector3 dir = to / Mathf.Max(dist, 0.0001f);
-
-            if (dir.sqrMagnitude > 0.0001f)
-            {
-                Quaternion targetRot = Quaternion.LookRotation(dir, Vector3.up);
-                transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRot, turnSpeed * Time.deltaTime);
-            }
-
-            transform.position += transform.forward * (curSpeed * Time.deltaTime);
-            SetAnimSpeed(speedValue);
+            _curSpeed = Mathf.MoveTowards(_curSpeed, 0f, accel * Time.deltaTime);
+            return;
         }
-        else
+
+        Vector3 dir = to / Mathf.Max(dist, 0.0001f);
+
+        // 회전
+        if (dir.sqrMagnitude > 0.0001f)
         {
-            SetAnimSpeed(0f);
+            Quaternion targetRot = Quaternion.LookRotation(dir, Vector3.up);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRot, turnSpeed * Time.deltaTime);
         }
+
+        // 가속도
+        _curSpeed = Mathf.MoveTowards(_curSpeed, maxSpeed, accel * Time.deltaTime);
+
+        // 이동
+        transform.position += transform.forward * (_curSpeed * Time.deltaTime);
     }
 
-    void SetAnimSpeed(float v)
+    void FaceTarget(Vector3 worldPos)
     {
-        if (animator != null && _hasSpeed)
-            animator.SetFloat(speedParam, v);
+        Vector3 to = worldPos - transform.position;
+        to.y = 0f;
+        if (to.sqrMagnitude < 0.0001f) return;
+
+        Quaternion targetRot = Quaternion.LookRotation(to.normalized, Vector3.up);
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRot, turnSpeed * Time.deltaTime);
+    }
+
+    void PickNewWanderTarget()
+    {
+        Vector2 r = Random.insideUnitCircle * wanderRadius;
+        _wanderTarget = transform.position + new Vector3(r.x, 0f, r.y);
+    }
+
+    void UpdateAnimatorParams()
+    {
+        if (!animator) return;
+
+        bool moving = (_state != State.Attack) && (_curSpeed > 0.05f);
+        bool chasing = (_state == State.Chase);
+
+        // Speed: 0~1 (이동 여부/속도 비례)
+        if (_hasSpeed)
+        {
+            float denom = Mathf.Max(0.001f, chaseSpeed);
+            float speed01 = moving ? Mathf.Clamp01(_curSpeed / denom) : 0f;
+            animator.SetFloat(speedParam, speed01);
+        }
+
+        // IsChasing: Move <-> Move2_forward 분기용
+        if (_hasChasing) animator.SetBool(isChasingParam, chasing);
+
+        // 애니메이션 재생 속도(달리는 느낌)
+        if (driveAnimatorSpeed)
+        {
+            if (_state == State.Attack) animator.speed = attackAnimSpeed;
+            else if (moving)
+            {
+                // wander는 walk, chase는 run 쪽으로
+                float t = Mathf.Clamp01(_curSpeed / Mathf.Max(0.001f, chaseSpeed));
+                float target = chasing ? Mathf.Lerp(walkAnimSpeed, runAnimSpeed, t) : Mathf.Lerp(1.0f, walkAnimSpeed, t);
+                animator.speed = target;
+            }
+            else animator.speed = 1f;
+        }
     }
 
     void CacheAnimatorParams()
     {
-        _hasSpeed = _hasAtk1 = _hasAtk2 = _hasAtkFallback = false;
-        if (animator == null) return;
+        _hasSpeed = _hasChasing = _hasAtk1 = _hasAtk2 = false;
+        if (!animator) return;
 
-        var ps = animator.parameters;
-        foreach (var p in ps)
+        foreach (var p in animator.parameters)
         {
             if (p.type == AnimatorControllerParameterType.Float && p.name == speedParam) _hasSpeed = true;
+            if (p.type == AnimatorControllerParameterType.Bool && p.name == isChasingParam) _hasChasing = true;
             if (p.type == AnimatorControllerParameterType.Trigger && p.name == attack1Trigger) _hasAtk1 = true;
             if (p.type == AnimatorControllerParameterType.Trigger && p.name == attack2Trigger) _hasAtk2 = true;
-            if (p.type == AnimatorControllerParameterType.Trigger && p.name == attackFallbackTrigger) _hasAtkFallback = true;
         }
     }
 
     void ResolveTerrain()
     {
-        if (terrain != null) return;
+        if (terrain) return;
 
-        // terrainRoot가 있으면 그 안에서 찾기
-        if (terrainRoot != null)
+        if (terrainRoot)
         {
             terrain = terrainRoot.GetComponent<Terrain>();
-            if (terrain == null) terrain = terrainRoot.GetComponentInChildren<Terrain>();
-            if (terrain != null) return;
+            if (!terrain) terrain = terrainRoot.GetComponentInChildren<Terrain>();
+            if (terrain) return;
         }
 
-        // activeTerrain들 중 현재 위치에 맞는 Terrain 찾기
-        if (Terrain.activeTerrain != null)
-        {
-            terrain = FindTerrainAt(transform.position);
-        }
+        if (Terrain.activeTerrain) terrain = Terrain.activeTerrain;
     }
 
-    Terrain FindTerrainAt(Vector3 worldPos)
+    void StickToGround()
     {
-        var terrains = Terrain.activeTerrains;
-        if (terrains == null || terrains.Length == 0) return null;
+        Vector3 pos = transform.position;
 
-        foreach (var t in terrains)
+        // Raycast 우선(지형이 Terrain이 아니어도 대응)
+        Vector3 origin = pos + Vector3.up * 50f;
+        if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, 200f, groundMask, QueryTriggerInteraction.Ignore))
         {
-            var tp = t.transform.position;
-            var size = t.terrainData.size;
-            bool inside =
-                worldPos.x >= tp.x && worldPos.x <= tp.x + size.x &&
-                worldPos.z >= tp.z && worldPos.z <= tp.z + size.z;
-            if (inside) return t;
+            pos.y = hit.point.y + yOffset;
+            transform.position = pos;
+            return;
         }
-        return Terrain.activeTerrain;
-    }
 
-    void SnapToTerrain()
-    {
-        var t = FindTerrainAt(transform.position);
-        if (t != null) terrain = t;
-        if (terrain == null) return;
-
-        float y = terrain.SampleHeight(transform.position) + terrain.transform.position.y + yOffset;
-        transform.position = new Vector3(transform.position.x, y, transform.position.z);
-    }
-
-    void PickNewTarget()
-    {
-        Vector2 rnd = Random.insideUnitCircle * wanderRadius;
-        Vector3 center = transform.position;
-        _target = new Vector3(center.x + rnd.x, center.y, center.z + rnd.y);
-
-        var t = FindTerrainAt(_target);
-        if (t != null)
+        // fallback: Terrain
+        if (terrain)
         {
-            float y = t.SampleHeight(_target) + t.transform.position.y;
-            _target.y = y;
+            float y = terrain.SampleHeight(pos) + terrain.transform.position.y;
+            pos.y = y + yOffset;
+            transform.position = pos;
         }
     }
 
-    static Vector3 Flat(Vector3 v) => new Vector3(v.x, 0f, v.z);
+    static float FlatDistance(Vector3 a, Vector3 b)
+    {
+        a.y = 0f; b.y = 0f;
+        return Vector3.Distance(a, b);
+    }
+
+#if UNITY_EDITOR
+    void OnDrawGizmosSelected()
+    {
+        // Color.orange는 Unity에 없어서 직접 만듦(이전 에러 원인)
+        Color orange = new Color(1f, 0.5f, 0f, 1f);
+
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, detectRadius);
+
+        Gizmos.color = orange;
+        Gizmos.DrawWireSphere(transform.position, loseRadius);
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, attackStartRadius);
+
+        Gizmos.color = new Color(1f, 0f, 0f, 0.35f);
+        Gizmos.DrawWireSphere(transform.position, attackHitRadius);
+    }
+#endif
 }

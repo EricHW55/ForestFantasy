@@ -1,0 +1,1667 @@
+fileFormatVersion: 2
+guid: 34bf333920b9886469ea633c17e22d4d
+ModelImporter:
+  serializedVersion: 22200
+  internalIDToNameTable:
+  - first:
+      1: 100000
+    second: Box001
+  - first:
+      1: 100002
+    second: cave_troll_
+  - first:
+      1: 100004
+    second: cave_troll_Hub001
+  - first:
+      1: 100006
+    second: cave_troll_Hub001Bone001
+  - first:
+      1: 100008
+    second: cave_troll_Hub001Bone001Bone001
+  - first:
+      1: 100010
+    second: cave_troll_Hub001Bone001Bone001Bone001
+  - first:
+      1: 100012
+    second: cave_troll_Hub001Bone001Bone001Bone002
+  - first:
+      1: 100014
+    second: cave_troll_Hub001Bone001Bone002
+  - first:
+      1: 100016
+    second: cave_troll_Hub001Bone002
+  - first:
+      1: 100018
+    second: cave_troll_Hub002
+  - first:
+      1: 100020
+    second: cave_troll_Hub003_dnu
+  - first:
+      1: 100022
+    second: cave_troll_Hub003Bone001
+  - first:
+      1: 100024
+    second: cave_troll_Hub003Bone001Bone001
+  - first:
+      1: 100026
+    second: cave_troll_Hub003Bone001Bone002
+  - first:
+      1: 100028
+    second: cave_troll_Hub003Bone001Bone003
+  - first:
+      1: 100030
+    second: cave_troll_Hub003Bone001Bone004
+  - first:
+      1: 100032
+    second: cave_troll_Hub003Bone001Bone005
+  - first:
+      1: 100034
+    second: cave_troll_Hub003Bone001Bone006
+  - first:
+      1: 100036
+    second: cave_troll_Hub003Bone001Bone007
+  - first:
+      1: 100038
+    second: cave_troll_Hub003Bone001Bone008
+  - first:
+      1: 100040
+    second: cave_troll_Hub003Bone001Bone009
+  - first:
+      1: 100042
+    second: cave_troll_Hub003Bone001Bone010
+  - first:
+      1: 100044
+    second: cave_troll_Hub003Bone001Bone011
+  - first:
+      1: 100046
+    second: cave_troll_Hub003Bone001Bone012
+  - first:
+      1: 100048
+    second: cave_troll_Hub003Bone001Bone013
+  - first:
+      1: 100050
+    second: cave_troll_Hub003Bone001Bone014
+  - first:
+      1: 100052
+    second: cave_troll_Hub003Bone001Bone015
+  - first:
+      1: 100054
+    second: cave_troll_Hub003Bone001Bone016
+  - first:
+      1: 100056
+    second: cave_troll_Hub003Bone001Bone017
+  - first:
+      1: 100058
+    second: cave_troll_Hub003Bone001Bone018
+  - first:
+      1: 100060
+    second: cave_troll_Hub003Bone001Bone019
+  - first:
+      1: 100062
+    second: cave_troll_LArm1
+  - first:
+      1: 100064
+    second: cave_troll_LArm21
+  - first:
+      1: 100066
+    second: cave_troll_LArm22
+  - first:
+      1: 100068
+    second: cave_troll_LArmCollarbone
+  - first:
+      1: 100070
+    second: cave_troll_LArmDigit11
+  - first:
+      1: 100072
+    second: cave_troll_LArmDigit12
+  - first:
+      1: 100074
+    second: cave_troll_LArmDigit13
+  - first:
+      1: 100076
+    second: cave_troll_LArmDigit21
+  - first:
+      1: 100078
+    second: cave_troll_LArmDigit22
+  - first:
+      1: 100080
+    second: cave_troll_LArmDigit23
+  - first:
+      1: 100082
+    second: cave_troll_LArmDigit31
+  - first:
+      1: 100084
+    second: cave_troll_LArmDigit32
+  - first:
+      1: 100086
+    second: cave_troll_LArmDigit33
+  - first:
+      1: 100088
+    second: cave_troll_LArmDigit41
+  - first:
+      1: 100090
+    second: cave_troll_LArmDigit42
+  - first:
+      1: 100092
+    second: cave_troll_LArmDigit43
+  - first:
+      1: 100094
+    second: cave_troll_LArmIKTarget
+  - first:
+      1: 100096
+    second: cave_troll_LArmPalm
+  - first:
+      1: 100098
+    second: cave_troll_LLeg1
+  - first:
+      1: 100100
+    second: cave_troll_LLeg2
+  - first:
+      1: 100102
+    second: cave_troll_LLegAnkle
+  - first:
+      1: 100104
+    second: cave_troll_LLegDigit11
+  - first:
+      1: 100106
+    second: cave_troll_LLegDigit12
+  - first:
+      1: 100108
+    second: cave_troll_LLegDigit21
+  - first:
+      1: 100110
+    second: cave_troll_LLegDigit22
+  - first:
+      1: 100112
+    second: cave_troll_LLegDigit31
+  - first:
+      1: 100114
+    second: cave_troll_LLegDigit32
+  - first:
+      1: 100116
+    second: cave_troll_LLegDigit41
+  - first:
+      1: 100118
+    second: cave_troll_LLegDigit42
+  - first:
+      1: 100120
+    second: cave_troll_LLegPlatform
+  - first:
+      1: 100122
+    second: cave_troll_RArm1
+  - first:
+      1: 100124
+    second: cave_troll_RArm21
+  - first:
+      1: 100126
+    second: cave_troll_RArm22
+  - first:
+      1: 100128
+    second: cave_troll_RArmCollarbone
+  - first:
+      1: 100130
+    second: cave_troll_RArmDigit11
+  - first:
+      1: 100132
+    second: cave_troll_RArmDigit12
+  - first:
+      1: 100134
+    second: cave_troll_RArmDigit13
+  - first:
+      1: 100136
+    second: cave_troll_RArmDigit21
+  - first:
+      1: 100138
+    second: cave_troll_RArmDigit22
+  - first:
+      1: 100140
+    second: cave_troll_RArmDigit23
+  - first:
+      1: 100142
+    second: cave_troll_RArmDigit31
+  - first:
+      1: 100144
+    second: cave_troll_RArmDigit32
+  - first:
+      1: 100146
+    second: cave_troll_RArmDigit33
+  - first:
+      1: 100148
+    second: cave_troll_RArmDigit41
+  - first:
+      1: 100150
+    second: cave_troll_RArmDigit42
+  - first:
+      1: 100152
+    second: cave_troll_RArmDigit43
+  - first:
+      1: 100154
+    second: cave_troll_RArmIKTarget
+  - first:
+      1: 100156
+    second: cave_troll_RArmPalm
+  - first:
+      1: 100158
+    second: cave_troll_RLeg1
+  - first:
+      1: 100160
+    second: cave_troll_RLeg2
+  - first:
+      1: 100162
+    second: cave_troll_RLegAnkle
+  - first:
+      1: 100164
+    second: cave_troll_RLegDigit11
+  - first:
+      1: 100166
+    second: cave_troll_RLegDigit12
+  - first:
+      1: 100168
+    second: cave_troll_RLegDigit21
+  - first:
+      1: 100170
+    second: cave_troll_RLegDigit22
+  - first:
+      1: 100172
+    second: cave_troll_RLegDigit31
+  - first:
+      1: 100174
+    second: cave_troll_RLegDigit32
+  - first:
+      1: 100176
+    second: cave_troll_RLegDigit41
+  - first:
+      1: 100178
+    second: cave_troll_RLegDigit42
+  - first:
+      1: 100180
+    second: cave_troll_RLegPlatform
+  - first:
+      1: 100182
+    second: cave_troll_Spine1
+  - first:
+      1: 100184
+    second: cave_troll_Spine1 1
+  - first:
+      1: 100186
+    second: cave_troll_Spine2
+  - first:
+      1: 100188
+    second: cave_troll_Spine2 1
+  - first:
+      1: 100190
+    second: cave_troll_Spine3
+  - first:
+      1: 100192
+    second: cave_troll_Transform
+  - first:
+      1: 100194
+    second: eyes_low
+  - first:
+      1: 100196
+    second: lower_teeth_low
+  - first:
+      1: 100198
+    second: mace_low
+  - first:
+      1: 100200
+    second: Point001
+  - first:
+      1: 100202
+    second: second_handle
+  - first:
+      1: 100204
+    second: Sky001
+  - first:
+      1: 100206
+    second: Spot001
+  - first:
+      1: 100208
+    second: Spot001.Target
+  - first:
+      1: 100210
+    second: Spot002
+  - first:
+      1: 100212
+    second: Spot002.Target
+  - first:
+      1: 100214
+    second: tanga_low
+  - first:
+      1: 100216
+    second: Text001
+  - first:
+      1: 100218
+    second: //RootNode
+  - first:
+      1: 100220
+    second: troll_body_low
+  - first:
+      1: 100222
+    second: upper_teeth_low
+  - first:
+      1: 100224
+    second: ' 1'
+  - first:
+      4: 400000
+    second: Box001
+  - first:
+      4: 400002
+    second: cave_troll_
+  - first:
+      4: 400004
+    second: cave_troll_Hub001
+  - first:
+      4: 400006
+    second: cave_troll_Hub001Bone001
+  - first:
+      4: 400008
+    second: cave_troll_Hub001Bone001Bone001
+  - first:
+      4: 400010
+    second: cave_troll_Hub001Bone001Bone001Bone001
+  - first:
+      4: 400012
+    second: cave_troll_Hub001Bone001Bone001Bone002
+  - first:
+      4: 400014
+    second: cave_troll_Hub001Bone001Bone002
+  - first:
+      4: 400016
+    second: cave_troll_Hub001Bone002
+  - first:
+      4: 400018
+    second: cave_troll_Hub002
+  - first:
+      4: 400020
+    second: cave_troll_Hub003_dnu
+  - first:
+      4: 400022
+    second: cave_troll_Hub003Bone001
+  - first:
+      4: 400024
+    second: cave_troll_Hub003Bone001Bone001
+  - first:
+      4: 400026
+    second: cave_troll_Hub003Bone001Bone002
+  - first:
+      4: 400028
+    second: cave_troll_Hub003Bone001Bone003
+  - first:
+      4: 400030
+    second: cave_troll_Hub003Bone001Bone004
+  - first:
+      4: 400032
+    second: cave_troll_Hub003Bone001Bone005
+  - first:
+      4: 400034
+    second: cave_troll_Hub003Bone001Bone006
+  - first:
+      4: 400036
+    second: cave_troll_Hub003Bone001Bone007
+  - first:
+      4: 400038
+    second: cave_troll_Hub003Bone001Bone008
+  - first:
+      4: 400040
+    second: cave_troll_Hub003Bone001Bone009
+  - first:
+      4: 400042
+    second: cave_troll_Hub003Bone001Bone010
+  - first:
+      4: 400044
+    second: cave_troll_Hub003Bone001Bone011
+  - first:
+      4: 400046
+    second: cave_troll_Hub003Bone001Bone012
+  - first:
+      4: 400048
+    second: cave_troll_Hub003Bone001Bone013
+  - first:
+      4: 400050
+    second: cave_troll_Hub003Bone001Bone014
+  - first:
+      4: 400052
+    second: cave_troll_Hub003Bone001Bone015
+  - first:
+      4: 400054
+    second: cave_troll_Hub003Bone001Bone016
+  - first:
+      4: 400056
+    second: cave_troll_Hub003Bone001Bone017
+  - first:
+      4: 400058
+    second: cave_troll_Hub003Bone001Bone018
+  - first:
+      4: 400060
+    second: cave_troll_Hub003Bone001Bone019
+  - first:
+      4: 400062
+    second: cave_troll_LArm1
+  - first:
+      4: 400064
+    second: cave_troll_LArm21
+  - first:
+      4: 400066
+    second: cave_troll_LArm22
+  - first:
+      4: 400068
+    second: cave_troll_LArmCollarbone
+  - first:
+      4: 400070
+    second: cave_troll_LArmDigit11
+  - first:
+      4: 400072
+    second: cave_troll_LArmDigit12
+  - first:
+      4: 400074
+    second: cave_troll_LArmDigit13
+  - first:
+      4: 400076
+    second: cave_troll_LArmDigit21
+  - first:
+      4: 400078
+    second: cave_troll_LArmDigit22
+  - first:
+      4: 400080
+    second: cave_troll_LArmDigit23
+  - first:
+      4: 400082
+    second: cave_troll_LArmDigit31
+  - first:
+      4: 400084
+    second: cave_troll_LArmDigit32
+  - first:
+      4: 400086
+    second: cave_troll_LArmDigit33
+  - first:
+      4: 400088
+    second: cave_troll_LArmDigit41
+  - first:
+      4: 400090
+    second: cave_troll_LArmDigit42
+  - first:
+      4: 400092
+    second: cave_troll_LArmDigit43
+  - first:
+      4: 400094
+    second: cave_troll_LArmIKTarget
+  - first:
+      4: 400096
+    second: cave_troll_LArmPalm
+  - first:
+      4: 400098
+    second: cave_troll_LLeg1
+  - first:
+      4: 400100
+    second: cave_troll_LLeg2
+  - first:
+      4: 400102
+    second: cave_troll_LLegAnkle
+  - first:
+      4: 400104
+    second: cave_troll_LLegDigit11
+  - first:
+      4: 400106
+    second: cave_troll_LLegDigit12
+  - first:
+      4: 400108
+    second: cave_troll_LLegDigit21
+  - first:
+      4: 400110
+    second: cave_troll_LLegDigit22
+  - first:
+      4: 400112
+    second: cave_troll_LLegDigit31
+  - first:
+      4: 400114
+    second: cave_troll_LLegDigit32
+  - first:
+      4: 400116
+    second: cave_troll_LLegDigit41
+  - first:
+      4: 400118
+    second: cave_troll_LLegDigit42
+  - first:
+      4: 400120
+    second: cave_troll_LLegPlatform
+  - first:
+      4: 400122
+    second: cave_troll_RArm1
+  - first:
+      4: 400124
+    second: cave_troll_RArm21
+  - first:
+      4: 400126
+    second: cave_troll_RArm22
+  - first:
+      4: 400128
+    second: cave_troll_RArmCollarbone
+  - first:
+      4: 400130
+    second: cave_troll_RArmDigit11
+  - first:
+      4: 400132
+    second: cave_troll_RArmDigit12
+  - first:
+      4: 400134
+    second: cave_troll_RArmDigit13
+  - first:
+      4: 400136
+    second: cave_troll_RArmDigit21
+  - first:
+      4: 400138
+    second: cave_troll_RArmDigit22
+  - first:
+      4: 400140
+    second: cave_troll_RArmDigit23
+  - first:
+      4: 400142
+    second: cave_troll_RArmDigit31
+  - first:
+      4: 400144
+    second: cave_troll_RArmDigit32
+  - first:
+      4: 400146
+    second: cave_troll_RArmDigit33
+  - first:
+      4: 400148
+    second: cave_troll_RArmDigit41
+  - first:
+      4: 400150
+    second: cave_troll_RArmDigit42
+  - first:
+      4: 400152
+    second: cave_troll_RArmDigit43
+  - first:
+      4: 400154
+    second: cave_troll_RArmIKTarget
+  - first:
+      4: 400156
+    second: cave_troll_RArmPalm
+  - first:
+      4: 400158
+    second: cave_troll_RLeg1
+  - first:
+      4: 400160
+    second: cave_troll_RLeg2
+  - first:
+      4: 400162
+    second: cave_troll_RLegAnkle
+  - first:
+      4: 400164
+    second: cave_troll_RLegDigit11
+  - first:
+      4: 400166
+    second: cave_troll_RLegDigit12
+  - first:
+      4: 400168
+    second: cave_troll_RLegDigit21
+  - first:
+      4: 400170
+    second: cave_troll_RLegDigit22
+  - first:
+      4: 400172
+    second: cave_troll_RLegDigit31
+  - first:
+      4: 400174
+    second: cave_troll_RLegDigit32
+  - first:
+      4: 400176
+    second: cave_troll_RLegDigit41
+  - first:
+      4: 400178
+    second: cave_troll_RLegDigit42
+  - first:
+      4: 400180
+    second: cave_troll_RLegPlatform
+  - first:
+      4: 400182
+    second: cave_troll_Spine1
+  - first:
+      4: 400184
+    second: cave_troll_Spine1 1
+  - first:
+      4: 400186
+    second: cave_troll_Spine2
+  - first:
+      4: 400188
+    second: cave_troll_Spine2 1
+  - first:
+      4: 400190
+    second: cave_troll_Spine3
+  - first:
+      4: 400192
+    second: cave_troll_Transform
+  - first:
+      4: 400194
+    second: eyes_low
+  - first:
+      4: 400196
+    second: lower_teeth_low
+  - first:
+      4: 400198
+    second: mace_low
+  - first:
+      4: 400200
+    second: Point001
+  - first:
+      4: 400202
+    second: second_handle
+  - first:
+      4: 400204
+    second: Sky001
+  - first:
+      4: 400206
+    second: Spot001
+  - first:
+      4: 400208
+    second: Spot001.Target
+  - first:
+      4: 400210
+    second: Spot002
+  - first:
+      4: 400212
+    second: Spot002.Target
+  - first:
+      4: 400214
+    second: tanga_low
+  - first:
+      4: 400216
+    second: Text001
+  - first:
+      4: 400218
+    second: //RootNode
+  - first:
+      4: 400220
+    second: troll_body_low
+  - first:
+      4: 400222
+    second: upper_teeth_low
+  - first:
+      4: 400224
+    second: ' 1'
+  - first:
+      23: 2300000
+    second: cave_troll_Transform
+  - first:
+      23: 2300002
+    second: mace_low
+  - first:
+      33: 3300000
+    second: cave_troll_Transform
+  - first:
+      33: 3300002
+    second: mace_low
+  - first:
+      43: 4300000
+    second: tanga_low
+  - first:
+      43: 4300002
+    second: troll_body_low
+  - first:
+      43: 4300004
+    second: lower_teeth_low
+  - first:
+      43: 4300006
+    second: upper_teeth_low
+  - first:
+      43: 4300008
+    second: eyes_low
+  - first:
+      43: 4300010
+    second: Box001
+  - first:
+      43: 4300012
+    second: cave_troll_Transform
+  - first:
+      43: 4300014
+    second: mace_low
+  - first:
+      74: 7400000
+    second: idle
+  - first:
+      74: 7400002
+    second: idle_break
+  - first:
+      74: 7400004
+    second: walk
+  - first:
+      74: 7400006
+    second: run
+  - first:
+      74: 7400008
+    second: attack1
+  - first:
+      74: 7400010
+    second: attack2
+  - first:
+      74: 7400012
+    second: take_damage
+  - first:
+      74: 7400014
+    second: death
+  - first:
+      95: 9500000
+    second: //RootNode
+  - first:
+      108: 10800000
+    second: Sky001
+  - first:
+      108: 10800002
+    second: Spot001
+  - first:
+      108: 10800004
+    second: Spot002
+  - first:
+      137: 13700000
+    second: Box001
+  - first:
+      137: 13700002
+    second: eyes_low
+  - first:
+      137: 13700004
+    second: lower_teeth_low
+  - first:
+      137: 13700006
+    second: tanga_low
+  - first:
+      137: 13700008
+    second: troll_body_low
+  - first:
+      137: 13700010
+    second: upper_teeth_low
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: No Name
+    second: {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: hair_mat
+    second: {fileID: 2100000, guid: abdb9c1ee4c639348b6311e4e961a367, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: tanga_mat
+    second: {fileID: 2100000, guid: c59556e62f7e1094b8206ac37331476d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: troll_body_mat
+    second: {fileID: 2100000, guid: 791fa1a3bfdff164abe3c69d9129f1ce, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: weapon_mat
+    second: {fileID: 2100000, guid: 8eafa6cf230ea9b4ea382d3d92df2883, type: 2}
+  materials:
+    materialImportMode: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    removeConstantScaleCurves: 0
+    motionNodeName: 
+    rigImportErrors: "Invalid Avatar Rig Configuration. Missing or invalid transform:\n\tFound
+      duplicate transform 'cave_troll_LArmDigit31' for human bone 'Left Middle Proximal'
+      and 'LeftHand'\n"
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 0
+    animationRotationError: 0.05
+    animationPositionError: 0.05
+    animationScaleError: 0.05
+    animationWrapMode: 0
+    extraExposedTransformPaths:
+    - cave_troll_Transform
+    extraUserProperties: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: idle
+      takeName: idle
+      internalID: 0
+      firstFrame: 105
+      lastFrame: 194
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 1
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 1
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 1
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 105
+    - serializedVersion: 16
+      name: idle_break
+      takeName: idle_break
+      internalID: 0
+      firstFrame: 1
+      lastFrame: 105
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 1
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 1
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: walk
+      takeName: walk
+      internalID: 0
+      firstFrame: 197
+      lastFrame: 316
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 1
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 196.8
+    - serializedVersion: 16
+      name: run
+      takeName: run
+      internalID: 0
+      firstFrame: 319
+      lastFrame: 397
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 1
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 1
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: attack1
+      takeName: attack1
+      internalID: 0
+      firstFrame: 400
+      lastFrame: 450
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 1
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 1
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: attack2
+      takeName: attack2
+      internalID: 0
+      firstFrame: 453
+      lastFrame: 518
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 1
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 1
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: take_damage
+      takeName: take_damage
+      internalID: 0
+      firstFrame: 520
+      lastFrame: 548
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 1
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 1
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: death
+      takeName: death
+      internalID: 0
+      firstFrame: 548
+      lastFrame: 606
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 1
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 1
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importPhysicalCameras: 0
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 0
+    importLights: 0
+    nodeNameCollisionStrategy: 0
+    fileIdsGeneration: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    keepQuads: 0
+    weldVertices: 1
+    bakeAxisConversion: 0
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    optimizeBones: 1
+    meshOptimizationFlags: 1
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 0
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    strictVertexDataChecks: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 1
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
+  importAnimation: 1
+  humanDescription:
+    serializedVersion: 3
+    human: []
+    skeleton:
+    - name: troll_(Clone)
+      parentName: 
+      position: {x: 0, y: 0, z: 0}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: tanga_low
+      parentName: troll_(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071068}
+      scale: {x: 0.01, y: 0.01, z: 0.01}
+    - name: troll_body_low
+      parentName: troll_(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071068}
+      scale: {x: 0.01, y: 0.01, z: 0.01}
+    - name: lower_teeth_low
+      parentName: troll_(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071068}
+      scale: {x: 0.01, y: 0.01, z: 0.01}
+    - name: upper_teeth_low
+      parentName: troll_(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071068}
+      scale: {x: 0.01, y: 0.01, z: 0.01}
+    - name: eyes_low
+      parentName: troll_(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071068}
+      scale: {x: 0.01, y: 0.01, z: 0.01}
+    - name: Box001
+      parentName: troll_(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071068}
+      scale: {x: 0.01, y: 0.01, z: 0.01}
+    - name: cave_troll_
+      parentName: troll_(Clone)
+      position: {x: -0, y: 0, z: -0.061072655}
+      rotation: {x: 0.5000001, y: -0.50000006, z: -0.4999999, w: 0.49999997}
+      scale: {x: 0.01, y: 0.01, z: 0.01}
+    - name: cave_troll_LLegPlatform
+      parentName: troll_(Clone)
+      position: {x: -0.5855677, y: -0.000000013444184, z: -0.15063639}
+      rotation: {x: 0.5686282, y: -0.5686281, z: -0.42031178, w: 0.4203119}
+      scale: {x: 0.01, y: 0.01, z: 0.01}
+    - name: cave_troll_RLegPlatform
+      parentName: troll_(Clone)
+      position: {x: 0.81613845, y: -0.000000024673367, z: -0.22138721}
+      rotation: {x: 0.420312, y: -0.42031187, z: -0.568628, w: 0.56862813}
+      scale: {x: 0.01, y: 0.01, z: 0.01}
+    - name: cave_troll_LArmIKTarget
+      parentName: troll_(Clone)
+      position: {x: -2.0688035, y: 2.4155707, z: -0.21619813}
+      rotation: {x: -0.24095209, y: 0.96388066, z: 0.054436404, w: -0.09956368}
+      scale: {x: 0.010000001, y: 0.010000001, z: 0.010000003}
+    - name: cave_troll_RArmIKTarget
+      parentName: troll_(Clone)
+      position: {x: 1.0639546, y: 1.5423706, z: -0.4669597}
+      rotation: {x: 0.124853335, y: 0.03652588, z: -0.5694862, w: 0.81164217}
+      scale: {x: 0.010000082, y: 0.009999995, z: 0.009999935}
+    - name: Point001
+      parentName: troll_(Clone)
+      position: {x: -0.00044624327, y: 1.8277687, z: 0.008614807}
+      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071068}
+      scale: {x: 0.01, y: 0.01, z: 0.01}
+    - name: cave_troll_Transform
+      parentName: troll_(Clone)
+      position: {x: -0.00058171, y: 0, z: 0.00096159225}
+      rotation: {x: 0.46955678, y: -0.46955663, z: -0.5286932, w: 0.52869326}
+      scale: {x: 0.010000001, y: 0.010000001, z: 0.010000003}
+    - name: cave_troll_Hub001
+      parentName: cave_troll_Transform
+      position: {x: -182.77682, y: 0.7615749, z: 0.07688569}
+      rotation: {x: 0.058911547, y: 0.0051539238, z: -0.08700299, w: 0.9944512}
+      scale: {x: 1.0000002, y: 1.0000005, z: 1.0000004}
+    - name: cave_troll_Hub001Bone001
+      parentName: cave_troll_Hub001
+      position: {x: 4.6267548, y: 46.06716, z: 0.0000009536743}
+      rotation: {x: 0.000000015832482, y: 0.00000010197981, z: -0.99979806, w: -0.020097638}
+      scale: {x: 1.0000002, y: 1.0000004, z: 1.0000004}
+    - name: cave_troll_Hub001Bone001Bone001
+      parentName: cave_troll_Hub001Bone001
+      position: {x: -25.270004, y: 0.0000038146973, z: -0.0000009536743}
+      rotation: {x: 0.000000074505806, y: -0, z: 0.022050768, w: 0.99975693}
+      scale: {x: 0.9999998, y: 1.0000001, z: 1}
+    - name: cave_troll_Hub001Bone001Bone001Bone001
+      parentName: cave_troll_Hub001Bone001Bone001
+      position: {x: -25.270004, y: 0.0000076293945, z: 0.0000009536743}
+      rotation: {x: 0.000000059110945, y: -0.000000027350373, z: 0.050493214, w: 0.9987244}
+      scale: {x: 1, y: 1.0000001, z: 1}
+    - name: cave_troll_Hub001Bone002
+      parentName: cave_troll_Hub001
+      position: {x: 9.195465, y: -49.61802, z: -0.000012397766}
+      rotation: {x: 0.15195937, y: -0.98838675, z: 0.00000020489094, w: 0.0000000018626449}
+      scale: {x: 1.0000002, y: 1.0000001, z: 1.0000004}
+    - name: cave_troll_Hub001Bone001Bone002
+      parentName: cave_troll_Hub001Bone002
+      position: {x: -32.992493, y: -0.0000019073486, z: 0}
+      rotation: {x: 0.000001206994, y: 0.00000008940697, z: 0.027716175, w: 0.99961585}
+      scale: {x: 1, y: 1.0000005, z: 1.0000001}
+    - name: cave_troll_Hub001Bone001Bone001Bone002
+      parentName: cave_troll_Hub001Bone001Bone002
+      position: {x: -30.323997, y: 0, z: 0}
+      rotation: {x: -0.0000041957032, y: -0.00000022637971, z: 0.02548012, w: 0.99967533}
+      scale: {x: 1, y: 0.99999964, z: 1.0000002}
+    - name: cave_troll_Spine1
+      parentName: cave_troll_Hub001
+      position: {x: -12.911591, y: -2.6725006, z: 0}
+      rotation: {x: 0.00000017881393, y: 0.00000008940697, z: 0.12761909, w: 0.9918233}
+      scale: {x: 1.0000004, y: 1.0000004, z: 1}
+    - name: cave_troll_Spine2
+      parentName: cave_troll_Spine1
+      position: {x: -37.5206, y: 0, z: 0}
+      rotation: {x: -0.00000011920929, y: -0.000000029802322, z: 0.085633576, w: 0.99632674}
+      scale: {x: 1.0000008, y: 1.0000004, z: 1.0000006}
+    - name: cave_troll_Spine3
+      parentName: cave_troll_Spine2
+      position: {x: -30.474548, y: 0, z: 0}
+      rotation: {x: 0.00000064074993, y: -0.000000029802322, z: -0.03928925, w: 0.9992279}
+      scale: {x: 0.99999964, y: 1.0000006, z: 1}
+    - name: cave_troll_Hub002
+      parentName: cave_troll_Spine3
+      position: {x: -40.149353, y: -0.0000019073486, z: 0}
+      rotation: {x: -0.00000063096775, y: 0.00000001863069, z: -0.087030694, w: 0.9962057}
+      scale: {x: 0.99999994, y: 0.9999998, z: 1.0000002}
+    - name: cave_troll_Spine1 1
+      parentName: cave_troll_Hub002
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: -0.000000014901161, y: -0.000000059604645, z: -0.5036075, w: 0.86393255}
+      scale: {x: 1.0000001, y: 1.0000018, z: 1.0000002}
+    - name: cave_troll_Spine2 1
+      parentName: cave_troll_Spine1 1
+      position: {x: -35.65371, y: 0.000030517578, z: 0}
+      rotation: {x: 0.00000015875824, y: -0.000000071120816, z: 0.2882115, w: 0.95756674}
+      scale: {x: 1.0000007, y: 0.99999964, z: 1.0000001}
+    - name: cave_troll_Hub003_dnu
+      parentName: cave_troll_Spine2 1
+      position: {x: -35.653717, y: 0, z: -0.0000038146973}
+      rotation: {x: 0.006010226, y: 0.093872786, z: 0.48032206, w: 0.87203354}
+      scale: {x: 1.0000002, y: 1.0000001, z: 1.0000002}
+    - name: cave_troll_Hub003Bone001
+      parentName: cave_troll_Hub003_dnu
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0.017920563, y: -0.092342116, z: -0.6852056, w: 0.72225004}
+      scale: {x: 1.0000002, y: 1.0000012, z: 1.0000004}
+    - name: cave_troll_Hub003Bone001Bone002
+      parentName: cave_troll_Hub003Bone001
+      position: {x: -24.178928, y: -7.45047, z: -7.0679865}
+      rotation: {x: 0.0011543203, y: -0.059216507, z: -0.019454734, w: 0.998055}
+      scale: {x: 1.0000014, y: 1.0000014, z: 1.0000008}
+    - name: cave_troll_Hub003Bone001Bone006
+      parentName: cave_troll_Hub003Bone001
+      position: {x: -24.17892, y: -7.450531, z: 7.0679917}
+      rotation: {x: 0.0011542997, y: -0.059216958, z: 0.019454855, w: -0.9980549}
+      scale: {x: 1.0000008, y: 1.0000011, z: 1.0000004}
+    - name: cave_troll_Hub003Bone001Bone015
+      parentName: cave_troll_Hub003Bone001
+      position: {x: -29.6119, y: -10.055511, z: 4.396658}
+      rotation: {x: 0.000000004656613, y: 0.10700335, z: -0.000000019092113, w: 0.9942587}
+      scale: {x: 1, y: 1.0000006, z: 1.0000005}
+    - name: cave_troll_Hub003Bone001Bone016
+      parentName: cave_troll_Hub003Bone001
+      position: {x: -25.527634, y: -12.681122, z: 10.930328}
+      rotation: {x: -0.000000009313226, y: 0.19607238, z: 0.000000021944288, w: 0.9805895}
+      scale: {x: 1.0000004, y: 1.0000013, z: 1.0000006}
+    - name: cave_troll_Hub003Bone001Bone007
+      parentName: cave_troll_Hub003Bone001
+      position: {x: -24.17892, y: -7.450531, z: 7.0679917}
+      rotation: {x: 0.06850529, y: 0.06814073, z: 0.1609357, w: 0.98222387}
+      scale: {x: 1.0000004, y: 1.0000008, z: 1.0000007}
+    - name: cave_troll_Hub003Bone001Bone001
+      parentName: cave_troll_Hub003Bone001
+      position: {x: -9.789677, y: 0.3242798, z: -0.0000009536743}
+      rotation: {x: 0.000000023748722, y: -0.00000007823109, z: -0.44246352, w: 0.8967865}
+      scale: {x: 1.0000006, y: 1.0000015, z: 1.000001}
+    - name: cave_troll_Hub003Bone001Bone013
+      parentName: cave_troll_Hub003Bone001Bone001
+      position: {x: -18.925247, y: -8.895523, z: -5.5095453}
+      rotation: {x: -0.000000027253506, y: 0.107003346, z: 0.00000005732572, w: -0.99425864}
+      scale: {x: 1.0000013, y: 1.0000006, z: 0.9999995}
+    - name: cave_troll_Hub003Bone001Bone014
+      parentName: cave_troll_Hub003Bone001Bone001
+      position: {x: -18.296783, y: -8.789963, z: 5.372691}
+      rotation: {x: -0.0000000062741, y: 0.10700342, z: 0.000000027523408, w: 0.99425864}
+      scale: {x: 1.0000004, y: 1.0000005, z: 0.99999964}
+    - name: cave_troll_Hub003Bone001Bone008
+      parentName: cave_troll_Hub003Bone001
+      position: {x: -29.805706, y: -10.055542, z: -3.506606}
+      rotation: {x: -0.000000015832484, y: 0.107003495, z: -0.00000007124618, w: -0.9942587}
+      scale: {x: 1.0000004, y: 1.0000012, z: 1.0000002}
+    - name: cave_troll_Hub003Bone001Bone009
+      parentName: cave_troll_Hub003Bone001
+      position: {x: -25.527618, y: -12.681122, z: -10.930319}
+      rotation: {x: 9.313227e-10, y: 0.19607258, z: -0.0000001192093, w: -0.9805894}
+      scale: {x: 1.000001, y: 1.0000017, z: 1.0000001}
+    - name: cave_troll_Hub003Bone001Bone003
+      parentName: cave_troll_Hub003Bone001
+      position: {x: -24.178928, y: -7.45047, z: -7.0679865}
+      rotation: {x: 0.06850533, y: 0.06814079, z: -0.16093569, w: -0.9822238}
+      scale: {x: 1.0000006, y: 1.0000005, z: 1.0000001}
+    - name: cave_troll_Hub003Bone001Bone010
+      parentName: cave_troll_Hub003Bone001
+      position: {x: -24.881756, y: 0.09732056, z: -11.593481}
+      rotation: {x: -0.000000033527616, y: 0.34414336, z: -0.000000004190952, w: -0.93891716}
+      scale: {x: 1.0000012, y: 1.0000012, z: 1.0000004}
+    - name: cave_troll_Hub003Bone001Bone017
+      parentName: cave_troll_Hub003Bone001
+      position: {x: -23.56845, y: 0.27139282, z: 13.144343}
+      rotation: {x: 0.000000023283064, y: 0.34414327, z: 0.000000081723556, w: 0.93891716}
+      scale: {x: 1, y: 1.0000013, z: 1.0000007}
+    - name: cave_troll_Hub003Bone001Bone004
+      parentName: cave_troll_Hub003Bone001
+      position: {x: -24.178928, y: -7.45047, z: -7.0679865}
+      rotation: {x: 0.03193312, y: 0.09119451, z: 0.28350598, w: -0.9540903}
+      scale: {x: 1, y: 1.0000013, z: 0.99999964}
+    - name: cave_troll_Hub003Bone001Bone012
+      parentName: cave_troll_Hub003Bone001
+      position: {x: -18.986881, y: 8.993378, z: -9.069979}
+      rotation: {x: -0.00000004749744, y: 0.107003495, z: -0.000000042375166, w: -0.9942587}
+      scale: {x: 1.0000004, y: 1.0000013, z: 1.0000001}
+    - name: cave_troll_Hub003Bone001Bone011
+      parentName: cave_troll_Hub003Bone001
+      position: {x: -25.72475, y: 5.4952087, z: -6.4539776}
+      rotation: {x: -0.00000004749744, y: 0.107003495, z: -0.000000042375166, w: -0.9942587}
+      scale: {x: 1.0000004, y: 1.0000012, z: 1}
+    - name: cave_troll_Hub003Bone001Bone019
+      parentName: cave_troll_Hub003Bone001
+      position: {x: -22.501842, y: 9.089325, z: 10.684584}
+      rotation: {x: -0.000000026077029, y: 0.1070033, z: -0.000000018830177, w: 0.99425864}
+      scale: {x: 0.99999964, y: 1.0000008, z: 1.0000001}
+    - name: cave_troll_Hub003Bone001Bone005
+      parentName: cave_troll_Hub003Bone001
+      position: {x: -24.17892, y: -7.450531, z: 7.0679917}
+      rotation: {x: 0.031933147, y: 0.09119436, z: -0.28350616, w: 0.9540903}
+      scale: {x: 0.99999976, y: 1.0000015, z: 1.0000004}
+    - name: cave_troll_Hub003Bone001Bone018
+      parentName: cave_troll_Hub003Bone001
+      position: {x: -25.794003, y: 5.52124, z: 6.135935}
+      rotation: {x: -0.000000026077029, y: 0.1070033, z: -0.000000018830177, w: 0.99425864}
+      scale: {x: 0.99999964, y: 1.0000008, z: 1.0000001}
+    - name: cave_troll_RArmCollarbone
+      parentName: cave_troll_Hub002
+      position: {x: -0, y: 0, z: -22.420004}
+      rotation: {x: -0.029384661, y: 0.67174107, z: 0.031243801, w: -0.7395433}
+      scale: {x: 1.0000018, y: 1.0000008, z: 1.0000007}
+    - name: cave_troll_RArm1
+      parentName: cave_troll_RArmCollarbone
+      position: {x: -48.349876, y: -0.0000038146973, z: 0}
+      rotation: {x: -0.16965663, y: -0.079632856, z: 0.045723926, w: 0.9812159}
+      scale: {x: 0.9999993, y: 0.9999995, z: 0.9999997}
+    - name: cave_troll_RArm21
+      parentName: cave_troll_RArm1
+      position: {x: -59.113373, y: -0.000015258789, z: -0.000015258789}
+      rotation: {x: -0.010081497, y: 0.033789612, z: -0.03749353, w: 0.9986746}
+      scale: {x: 1.0000011, y: 0.9999989, z: 1.000001}
+    - name: cave_troll_RArm22
+      parentName: cave_troll_RArm21
+      position: {x: -32.656403, y: -0.000009536743, z: -0.000015258789}
+      rotation: {x: 0.032208014, y: 0.000000111758716, z: 0.0000022281895, w: 0.9994812}
+      scale: {x: 1, y: 1.0000002, z: 1}
+    - name: cave_troll_RArmPalm
+      parentName: cave_troll_RArm22
+      position: {x: -32.656403, y: 0.0000038146973, z: 0}
+      rotation: {x: 0.72950584, y: 0.0026672392, z: 0.0021951732, w: 0.6839659}
+      scale: {x: 1.0000072, y: 0.99999857, z: 0.9999937}
+    - name: mace_low
+      parentName: cave_troll_RArmPalm
+      position: {x: -38.72548, y: -13.166069, z: 1.9133606}
+      rotation: {x: 0.3742098, y: 0.58836854, z: 0.65063626, w: 0.300769}
+      scale: {x: 0.9999871, y: 1.000006, z: 1.0000027}
+    - name: cave_troll_RArmDigit11
+      parentName: cave_troll_RArmPalm
+      position: {x: -13.720947, y: -7.731201, z: -14.405304}
+      rotation: {x: -0.08023316, y: -0.20019427, z: -0.00010763846, w: 0.97646546}
+      scale: {x: 1.000014, y: 1.0000002, z: 0.99998635}
+    - name: cave_troll_RArmDigit12
+      parentName: cave_troll_RArmDigit11
+      position: {x: -17.923004, y: 0.000011444092, z: 0.0000076293945}
+      rotation: {x: -0.000006973741, y: 0.03356682, z: -0.0000012749801, w: 0.9994365}
+      scale: {x: 1.0000076, y: 1.0000002, z: 0.99999267}
+    - name: cave_troll_RArmDigit13
+      parentName: cave_troll_RArmDigit12
+      position: {x: -13.756577, y: 0, z: 0}
+      rotation: {x: 0.000002262693, y: 0.22359033, z: 0.0000034685802, w: 0.9746832}
+      scale: {x: 1.0000058, y: 1.000001, z: 0.9999945}
+    - name: cave_troll_RArmDigit31
+      parentName: cave_troll_RArmPalm
+      position: {x: -42.54506, y: 8.665268, z: 7.2044296}
+      rotation: {x: 0.073522694, y: -0.119367115, z: 0.008726788, w: 0.9900858}
+      scale: {x: 0.99999386, y: 1, z: 1.0000068}
+    - name: cave_troll_RArmDigit32
+      parentName: cave_troll_RArmDigit31
+      position: {x: -18.107407, y: -0.0000076293945, z: 0.0000076293945}
+      rotation: {x: -0.000006787475, y: -0.0000005885955, z: 0.02985187, w: 0.9995544}
+      scale: {x: 0.99999654, y: 0.9999958, z: 1.0000067}
+    - name: cave_troll_RArmDigit33
+      parentName: cave_troll_RArmDigit32
+      position: {x: -13.0394745, y: 0, z: -0.0000076293945}
+      rotation: {x: 0.000024171546, y: 0.0000018179417, z: 0.13375169, w: 0.99101496}
+      scale: {x: 1.0000037, y: 0.99998915, z: 1.0000073}
+    - name: cave_troll_RArmDigit41
+      parentName: cave_troll_RArmPalm
+      position: {x: -33.330246, y: 0.22731018, z: 22.45684}
+      rotation: {x: 0.35670543, y: -0.11828622, z: 0.033538245, w: 0.92609113}
+      scale: {x: 0.99999774, y: 1.0000094, z: 0.99999255}
+    - name: cave_troll_RArmDigit42
+      parentName: cave_troll_RArmDigit41
+      position: {x: -15.108807, y: 0, z: 0.0000076293945}
+      rotation: {x: -0.000014334912, y: -0.000000022351735, z: 0.029397702, w: 0.9995678}
+      scale: {x: 0.9999983, y: 0.9999952, z: 1.0000076}
+    - name: cave_troll_RArmDigit43
+      parentName: cave_troll_RArmDigit42
+      position: {x: -12.915604, y: -0.0000076293945, z: 0}
+      rotation: {x: 0.00003221631, y: -0.0000018924475, z: 0.18070284, w: 0.9835378}
+      scale: {x: 1.0000088, y: 0.99999017, z: 1.0000001}
+    - name: cave_troll_RArmDigit21
+      parentName: cave_troll_RArmPalm
+      position: {x: -41.117622, y: 4.1224365, z: -14.695473}
+      rotation: {x: -0.09070538, y: -0.11395831, z: -0.003425168, w: 0.9893303}
+      scale: {x: 1.0000079, y: 1.000001, z: 0.9999924}
+    - name: cave_troll_RArmDigit22
+      parentName: cave_troll_RArmDigit21
+      position: {x: -14.856369, y: 0, z: 0}
+      rotation: {x: -0.000010110431, y: 0.0000016912805, z: 0.026700802, w: 0.99964345}
+      scale: {x: 1.0000142, y: 0.9999937, z: 0.99999195}
+    - name: cave_troll_RArmDigit23
+      parentName: cave_troll_RArmDigit22
+      position: {x: -12.906082, y: -0.0000076293945, z: 0}
+      rotation: {x: 0.000014007092, y: 0.00000006705523, z: 0.15887402, w: 0.9872989}
+      scale: {x: 0.9999959, y: 1.0000113, z: 0.99999213}
+    - name: cave_troll_LArmCollarbone
+      parentName: cave_troll_Hub002
+      position: {x: -0, y: 0, z: 22.42001}
+      rotation: {x: -0.029384801, y: 0.67174083, z: -0.031244092, w: 0.73954344}
+      scale: {x: 0.9999996, y: 1.0000006, z: 1.0000011}
+    - name: cave_troll_LArm1
+      parentName: cave_troll_LArmCollarbone
+      position: {x: -48.349888, y: -0.0000019073486, z: 0}
+      rotation: {x: 0.15070611, y: 0.09691016, z: 0.12929747, w: 0.9752837}
+      scale: {x: 1.0000012, y: 1.0000017, z: 1.0000014}
+    - name: ' 1'
+      parentName: cave_troll_LArm1
+      position: {x: -59.113342, y: -0.0000076293945, z: 0}
+      rotation: {x: 0.014939932, y: -0.08003209, z: -0.24203916, w: 0.96684474}
+      scale: {x: 1.0000024, y: 0.9999985, z: 0.9999998}
+    - name: cave_troll_LArm22
+      parentName: ' 1'
+      position: {x: -32.656403, y: 0.0000019073486, z: 0}
+      rotation: {x: -0.045117296, y: 0.0485941, z: 0.07267255, w: 0.9951491}
+      scale: {x: 0.99999994, y: 1.0000002, z: 1.0000001}
+    - name: cave_troll_LArmPalm
+      parentName: cave_troll_LArm22
+      position: {x: -32.656418, y: -0.0000038146973, z: 0}
+      rotation: {x: -0.7295109, y: -0.0026734518, z: 0.002198956, w: 0.6839605}
+      scale: {x: 1.0000081, y: 0.9999988, z: 0.99999374}
+    - name: cave_troll_LArmDigit11
+      parentName: cave_troll_LArmPalm
+      position: {x: -13.720963, y: -7.7312317, z: 14.405277}
+      rotation: {x: 0.034239948, y: 0.31098107, z: -0.035485327, w: 0.949136}
+      scale: {x: 1.0000007, y: 0.9999992, z: 1.0000008}
+    - name: cave_troll_LArmDigit12
+      parentName: cave_troll_LArmDigit11
+      position: {x: -17.922997, y: 0.0000076293945, z: -0.0000076293945}
+      rotation: {x: -0.000007804482, y: -0.033559587, z: -0.0000005066394, w: 0.9994368}
+      scale: {x: 0.99998873, y: 0.9999996, z: 1.0000131}
+    - name: cave_troll_LArmDigit13
+      parentName: cave_troll_LArmDigit12
+      position: {x: -13.756561, y: -0.0000076293945, z: 0}
+      rotation: {x: 0.0000019743688, y: -0.22359145, z: -0.000002529924, w: 0.974683}
+      scale: {x: 1.0000026, y: 0.9999996, z: 0.9999988}
+    - name: cave_troll_LArmDigit31
+      parentName: cave_troll_LArmPalm
+      position: {x: -42.545135, y: 8.665268, z: -7.204403}
+      rotation: {x: -0.038810056, y: -0.08630263, z: 0.03361053, w: 0.9949452}
+      scale: {x: 1.0000098, y: 0.999999, z: 0.9999922}
+    - name: cave_troll_LArmDigit32
+      parentName: cave_troll_LArmDigit31
+      position: {x: -18.107422, y: 0, z: 0}
+      rotation: {x: -0.000008039176, y: 0.0000014826653, z: 0.029851416, w: 0.99955434}
+      scale: {x: 1.0000023, y: 1.000006, z: 0.9999938}
+    - name: cave_troll_LArmDigit33
+      parentName: cave_troll_LArmDigit32
+      position: {x: -13.0394745, y: 0.0000076293945, z: 0.0000019073486}
+      rotation: {x: 0.000028710812, y: -0.0000007972121, z: 0.1337533, w: 0.99101466}
+      scale: {x: 0.9999958, y: 1.0000126, z: 0.9999935}
+    - name: cave_troll_LArmDigit41
+      parentName: cave_troll_LArmPalm
+      position: {x: -33.3303, y: 0.22731018, z: -22.456772}
+      rotation: {x: -0.30316806, y: -0.11836781, z: -0.018313223, w: 0.94537973}
+      scale: {x: 1.0000144, y: 0.999996, z: 0.99999017}
+    - name: cave_troll_LArmDigit42
+      parentName: cave_troll_LArmDigit41
+      position: {x: -15.108795, y: 0, z: -0.0000038146973}
+      rotation: {x: -0.000014811749, y: 0.000000111758666, z: 0.029406786, w: 0.9995675}
+      scale: {x: 1.0000058, y: 1.0000023, z: 0.9999933}
+    - name: cave_troll_LArmDigit43
+      parentName: cave_troll_LArmDigit42
+      position: {x: -12.915619, y: -0.0000076293945, z: -0.0000038146973}
+      rotation: {x: 0.000034734607, y: 0.0000007748604, z: 0.18070617, w: 0.9835372}
+      scale: {x: 0.9999881, y: 1.000014, z: 0.99999946}
+    - name: cave_troll_LArmDigit21
+      parentName: cave_troll_LArmPalm
+      position: {x: -41.1177, y: 4.1224365, z: 14.695442}
+      rotation: {x: 0.100397326, y: -0.01712275, z: 0.013392163, w: 0.99470997}
+      scale: {x: 0.9999935, y: 1.0000002, z: 1.0000081}
+    - name: cave_troll_LArmDigit22
+      parentName: cave_troll_LArmDigit21
+      position: {x: -14.856361, y: 0, z: -0.0000038146973}
+      rotation: {x: -0.000007018444, y: -0.0000018514686, z: 0.026694812, w: 0.9996437}
+      scale: {x: 0.9999963, y: 0.9999972, z: 1.0000079}
+    - name: cave_troll_LArmDigit23
+      parentName: cave_troll_LArmDigit22
+      position: {x: -12.906097, y: -0.0000038146973, z: 0}
+      rotation: {x: 0.000016957521, y: -0.000002540648, z: 0.15887439, w: 0.9872989}
+      scale: {x: 0.9999992, y: 0.9999952, z: 1.0000081}
+    - name: cave_troll_RLeg1
+      parentName: cave_troll_Hub001
+      position: {x: -0.000030517578, y: 0.0000038146973, z: -35.111984}
+      rotation: {x: -0.099205635, y: 0.9860609, z: -0.09793323, w: -0.0908366}
+      scale: {x: 1.0000001, y: 0.9999989, z: 1.0000005}
+    - name: cave_troll_RLeg2
+      parentName: cave_troll_RLeg1
+      position: {x: -89.72155, y: 0.00028038025, z: -0.00006866455}
+      rotation: {x: 0.013559631, y: -0.05359792, z: 0.18714496, w: 0.98077536}
+      scale: {x: 1.0000017, y: 0.9999902, z: 1.0000097}
+    - name: cave_troll_RLegAnkle
+      parentName: cave_troll_RLeg2
+      position: {x: -77.296104, y: 0.0000038146973, z: 0}
+      rotation: {x: 0.048482798, y: -0.032162525, z: -0.62276405, w: 0.7802435}
+      scale: {x: 1.0000118, y: 0.9999873, z: 1.0000001}
+    - name: cave_troll_RLegDigit11
+      parentName: cave_troll_RLegAnkle
+      position: {x: 3.230135, y: -18.74383, z: -11.373283}
+      rotation: {x: -0.38795483, y: -0.82550573, z: -0.019515269, w: 0.40945134}
+      scale: {x: 1.0000008, y: 0.99998957, z: 1.0000085}
+    - name: cave_troll_RLegDigit12
+      parentName: cave_troll_RLegDigit11
+      position: {x: -11.006401, y: 0, z: 0.0000076293945}
+      rotation: {x: 0.00000016391279, y: 0.00000017881395, z: 0.10495172, w: 0.99447733}
+      scale: {x: 1.0000032, y: 0.9999967, z: 1}
+    - name: cave_troll_RLegDigit31
+      parentName: cave_troll_RLegAnkle
+      position: {x: -51.60615, y: 10.396637, z: 0.49312592}
+      rotation: {x: -0.00019302961, y: 0.0007542054, z: -0.22767827, w: 0.9737361}
+      scale: {x: 1.0000049, y: 0.9999949, z: 1.0000001}
+    - name: cave_troll_RLegDigit32
+      parentName: cave_troll_RLegDigit31
+      position: {x: -20.010002, y: 0, z: 0.0000076293945}
+      rotation: {x: -0.000000017666023, y: -0.000000111001995, z: 0.061423667, w: 0.9981118}
+      scale: {x: 0.99999887, y: 1.0000014, z: 1.0000006}
+    - name: cave_troll_RLegDigit21
+      parentName: cave_troll_RLegAnkle
+      position: {x: -50.867928, y: 6.557726, z: -20.085228}
+      rotation: {x: -0.04416087, y: -0.14310262, z: -0.2886871, w: 0.94563806}
+      scale: {x: 1.0000054, y: 0.9999925, z: 1.0000007}
+    - name: cave_troll_RLegDigit22
+      parentName: cave_troll_RLegDigit21
+      position: {x: -19.300694, y: 0.0000009536743, z: 0.0000076293945}
+      rotation: {x: 0.000000014901159, y: -0.000000014901159, z: 0.17798185, w: 0.9840338}
+      scale: {x: 0.99999744, y: 1.0000035, z: 1}
+    - name: cave_troll_RLegDigit41
+      parentName: cave_troll_RLegAnkle
+      position: {x: -50.643845, y: 6.5269814, z: 20.380173}
+      rotation: {x: 0.07055582, y: 0.19078554, z: -0.18593746, w: 0.9612752}
+      scale: {x: 1.0000007, y: 0.99999565, z: 1.0000031}
+    - name: cave_troll_RLegDigit42
+      parentName: cave_troll_RLegDigit41
+      position: {x: -15.102264, y: 0, z: 0}
+      rotation: {x: -0.000000014901159, y: -0, z: 0.000000020489095, w: 1}
+      scale: {x: 0.99999946, y: 1.0000001, z: 0.9999995}
+    - name: cave_troll_LLeg1
+      parentName: cave_troll_Hub001
+      position: {x: 0.000030517578, y: 0.00001335144, z: 35.11202}
+      rotation: {x: -0.099199064, y: 0.9860621, z: 0.09792792, w: 0.09083654}
+      scale: {x: 1, y: 1.0000018, z: 0.99999946}
+    - name: cave_troll_LLeg2
+      parentName: cave_troll_LLeg1
+      position: {x: -89.72157, y: 0.0002822876, z: 0.000061035156}
+      rotation: {x: -0.013504586, y: 0.05360607, z: 0.18713036, w: 0.9807784}
+      scale: {x: 1.0000001, y: 1.0000049, z: 0.99999744}
+    - name: cave_troll_LLegAnkle
+      parentName: cave_troll_LLeg2
+      position: {x: -77.29611, y: 0.0000019073486, z: 0}
+      rotation: {x: -0.04853363, y: 0.03212763, z: -0.6227615, w: 0.7802439}
+      scale: {x: 0.999994, y: 1.0000062, z: 1.0000001}
+    - name: cave_troll_LLegDigit11
+      parentName: cave_troll_LLegAnkle
+      position: {x: 3.230135, y: -18.743832, z: 11.373276}
+      rotation: {x: 0.387955, y: 0.8255056, z: -0.019515386, w: 0.40945145}
+      scale: {x: 0.99999815, y: 1.0000058, z: 0.99999726}
+    - name: cave_troll_LLegDigit12
+      parentName: cave_troll_LLegDigit11
+      position: {x: -11.006407, y: 0, z: 0}
+      rotation: {x: 0.000000059604645, y: 0.00000023841858, z: 0.10495177, w: 0.9944774}
+      scale: {x: 0.9999985, y: 1.0000017, z: 1.0000007}
+    - name: cave_troll_LLegDigit31
+      parentName: cave_troll_LLegAnkle
+      position: {x: -51.606186, y: 10.3966465, z: -0.49313736}
+      rotation: {x: 0.00019305569, y: -0.00075401727, z: -0.22767857, w: 0.973736}
+      scale: {x: 0.9999971, y: 1.0000026, z: 1}
+    - name: cave_troll_LLegDigit32
+      parentName: cave_troll_LLegDigit31
+      position: {x: -20.010002, y: 0, z: 0.0000038146973}
+      rotation: {x: 0.000000044834444, y: -0.00000000669388, z: 0.06142368, w: 0.99811184}
+      scale: {x: 1.0000011, y: 0.99999946, z: 1.0000005}
+    - name: cave_troll_LLegDigit21
+      parentName: cave_troll_LLegAnkle
+      position: {x: -50.86796, y: 6.5577335, z: 20.085228}
+      rotation: {x: 0.04416093, y: 0.14310275, z: -0.2886874, w: 0.9456379}
+      scale: {x: 0.9999965, y: 1.0000037, z: 0.99999964}
+    - name: cave_troll_LLegDigit22
+      parentName: cave_troll_LLegDigit21
+      position: {x: -19.300694, y: -0.0000009536743, z: 0.0000038146973}
+      rotation: {x: -0, y: 0.000000029802315, z: 0.1779817, w: 0.98403376}
+      scale: {x: 1.0000017, y: 0.9999981, z: 1.0000007}
+    - name: cave_troll_LLegDigit41
+      parentName: cave_troll_LLegAnkle
+      position: {x: -50.643887, y: 6.5269833, z: -20.380177}
+      rotation: {x: -0.07055585, y: -0.19078544, z: -0.18593775, w: 0.9612752}
+      scale: {x: 0.999999, y: 1.0000027, z: 0.9999988}
+    - name: cave_troll_LLegDigit42
+      parentName: cave_troll_LLegDigit41
+      position: {x: -15.102261, y: 0.0000019073486, z: 0.0000038146973}
+      rotation: {x: -0, y: -0, z: -0.000000005587935, w: 1}
+      scale: {x: 1.0000001, y: 1.0000006, z: 1}
+    - name: second_handle
+      parentName: troll_(Clone)
+      position: {x: 1.4330691, y: 1.3829019, z: 0.6103536}
+      rotation: {x: 0.829841, y: 0.124759905, z: 0.05543155, w: 0.5410418}
+      scale: {x: 0.010000064, y: 0.010000001, z: 0.009999956}
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    globalScale: 1
+    rootMotionBoneName: cave_troll_Transform
+    hasTranslationDoF: 0
+    hasExtraRoot: 1
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 2
+  humanoidOversampling: 1
+  avatarSetup: 1
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 0
+  importBlendShapeDeformPercent: 0
+  remapMaterialsIfMaterialImportModeIsNone: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

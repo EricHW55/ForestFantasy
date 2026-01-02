@@ -2591,7 +2591,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8960949240223669770}
@@ -2668,21 +2668,37 @@ MonoBehaviour:
   animator: {fileID: 0}
   playerTarget: {fileID: 0}
   playerTag: Player
-  moveSpeed: 2
-  turnSpeed: 360
   wanderRadius: 10
-  arriveDist: 0.8
   repathInterval: 3
-  detectRadius: 18
+  arriveDist: 0.8
+  wanderSpeed: 2
+  wanderAcceleration: 6
+  detectRadius: 25
+  loseRadius: 35
   chaseSpeed: 6
-  attackRadius: 2.6
+  chaseAcceleration: 14
+  turnSpeed: 360
+  attackStopRadius: 2.4
+  attackStartRadius: 2.9
+  attackHitRadius: 3.2
+  attackDamage: 10
   attackCooldown: 1.2
-  faceTargetWhenAttacking: 1
+  attackHitDelay: 0.25
+  attackRecoverTime: 0.35
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
   yOffset: 0.02
   speedParam: Speed
+  isChasingParam: IsChasing
   attack1Trigger: Attack1
   attack2Trigger: Attack2
-  attackFallbackTrigger: Attack
+  driveAnimatorSpeed: 1
+  walkAnimSpeed: 1.15
+  runAnimSpeed: 1.85
+  attackAnimSpeed: 1.15
+  forceCrossFadeToIdleAfterAttack: 1
+  idleStateName: Idle
 --- !u!1 &2980038641596205187
 GameObject:
   m_ObjectHideFlags: 0

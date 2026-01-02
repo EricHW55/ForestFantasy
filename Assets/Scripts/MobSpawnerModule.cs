@@ -1,37 +1,74 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class MobSpawnerModule : MonoBehaviour, ITerrainStep
 {
-    // TerrainHeightModule(Order=100) 이후 + 디테일/프랍 이후에 스폰하고 싶으면 충분히 크게
     public int Order => 900;
 
-    [Header("Prefabs (Imp Blue/Brown/Red 등)")]
-    public List<GameObject> mobPrefabs = new();
+    [Serializable]
+    public class WeightedPrefab
+    {
+        public GameObject prefab;
+        [Min(0f)] public float weight = 1f; // 0이면 사실상 안 나옴
+    }
 
+    [Serializable]
+    public class SpawnRule
+    {
+        public string ruleName = "Imp";
+
+        [Tooltip("이 룰에서 뽑을 프리팹 + 가중치(확률 비율)")]
+        public List<WeightedPrefab> prefabs = new();
+
+        [Header("Rule Chance (optional)")]
+        public bool useRuleChance = false;
+        [Range(0f, 1f)] public float ruleChance = 1f; // 예: OneEye는 0.3이면 30% 확률로만 룰 실행
+
+        [Header("Count (random)")]
+        public int minCount = 3;
+        public int maxCount = 8;
+
+        [Header("Placement overrides (optional)")]
+        public bool overridePlacementRules = false;
+        public float maxSlopeAngle = 35f;
+        public float minDistanceBetweenMobs = 3f;
+        public int maxTriesPerMob = 30;
+        public float yOffset = 0.02f;
+
+        [Header("NavMesh (optional)")]
+        public bool requireNavMesh = false;
+        public float navMeshSearchRadius = 2.0f;
+
+        [Header("Hierarchy")]
+        public bool createSubRoot = true;
+    }
+
+    [Header("Spawn Rules (Imp / OneEye / ...)")]
+    public List<SpawnRule> spawnRules = new();
+
+    // -------- Root / Clear --------
     [Header("Spawned parent (optional)")]
     [SerializeField] private Transform spawnedRoot;
     public string spawnedRootName = "Mobs_Root";
     public bool parentRootToThisObject = true;
     public bool clearPrevious = true;
 
+    // -------- Area --------
     [Header("Terrain / Area")]
     public bool useWholeTerrain = true;
     public Vector2 areaMinXZ = new Vector2(0, 0);
     public Vector2 areaMaxXZ = new Vector2(100, 100);
 
-    [Header("Count (random)")]
-    public int minCount = 5;
-    public int maxCount = 15;
-
-    [Header("Placement rules")]
+    // -------- Default placement (Rule override 안 할 때) --------
+    [Header("Default Placement rules")]
     public float maxSlopeAngle = 35f;
     public float minDistanceBetweenMobs = 3f;
     public int maxTriesPerMob = 30;
     public float yOffset = 0.02f;
 
-    [Header("NavMesh (optional)")]
+    [Header("Default NavMesh (optional)")]
     public bool requireNavMesh = false;
     public float navMeshSearchRadius = 2.0f;
 
@@ -39,66 +76,133 @@ public class MobSpawnerModule : MonoBehaviour, ITerrainStep
     public int seedOffset = 1337;
 
     private readonly List<Vector3> _spawnedPositions = new();
+    private readonly Dictionary<string, Transform> _subRoots = new();
 
-    // ✅ ITerrainStep 인터페이스 시그니처 그대로!
     public void Apply(Terrain terrain, int seed)
     {
         if (terrain == null) { Debug.LogError("[MobSpawnerModule] terrain null"); return; }
-        if (mobPrefabs == null || mobPrefabs.Count == 0) { Debug.LogWarning("[MobSpawnerModule] mobPrefabs 비어있음"); return; }
+        if (spawnRules == null || spawnRules.Count == 0)
+        {
+            Debug.LogWarning("[MobSpawnerModule] spawnRules 비어있음");
+            return;
+        }
 
-        terrain.Flush(); // 높이/콜라이더 갱신 안전빵
-
+        terrain.Flush();
         EnsureSpawnedRoot();
 
         if (clearPrevious)
-            ClearChildren(spawnedRoot);
-
-        // 다른 모듈 랜덤에 영향 덜 주려고 state 보관/복구
-        var prevState = Random.state;
-        Random.InitState(seed ^ seedOffset);
-
-        _spawnedPositions.Clear();
-
-        GetSpawnBoundsXZ(terrain, out Vector2 minXZ, out Vector2 maxXZ);
-        int targetCount = Random.Range(minCount, maxCount + 1);
-
-        int spawned = 0;
-        int safetyTries = targetCount * Mathf.Max(1, maxTriesPerMob);
-
-        for (int i = 0; i < safetyTries && spawned < targetCount; i++)
         {
-            if (!TryFindSpawnPoint(terrain, minXZ, maxXZ, out Vector3 pos, out Quaternion rot))
-                continue;
-
-            var prefab = mobPrefabs[Random.Range(0, mobPrefabs.Count)];
-            var go = Instantiate(prefab, pos, rot, spawnedRoot);
-
-            // NavMeshAgent 있으면 초기 위치 확정(있어도/없어도 문제 없음)
-            var agent = go.GetComponent<NavMeshAgent>();
-            if (agent != null) agent.Warp(pos);
-
-            _spawnedPositions.Add(pos);
-            spawned++;
+            ClearChildren(spawnedRoot);
+            _subRoots.Clear();
         }
 
-        Random.state = prevState;
+        var prevState = UnityEngine.Random.state;
+        UnityEngine.Random.InitState(seed ^ seedOffset);
 
-        Debug.Log($"[MobSpawnerModule] spawned {spawned}/{targetCount}");
+        _spawnedPositions.Clear();
+        GetSpawnBoundsXZ(terrain, out Vector2 minXZ, out Vector2 maxXZ);
+
+        int totalSpawned = 0;
+
+        foreach (var rule in spawnRules)
+        {
+            if (rule == null) continue;
+            if (rule.prefabs == null || rule.prefabs.Count == 0) continue;
+
+            // 룰 자체 실행 확률
+            if (rule.useRuleChance && UnityEngine.Random.value > rule.ruleChance)
+                continue;
+
+            int minC = Mathf.Max(0, rule.minCount);
+            int maxC = Mathf.Max(minC, rule.maxCount);
+            int targetCount = UnityEngine.Random.Range(minC, maxC + 1);
+
+            float slope = rule.overridePlacementRules ? rule.maxSlopeAngle : maxSlopeAngle;
+            float minDist = rule.overridePlacementRules ? rule.minDistanceBetweenMobs : minDistanceBetweenMobs;
+            int triesPerMob = rule.overridePlacementRules ? rule.maxTriesPerMob : maxTriesPerMob;
+            float yOff = rule.overridePlacementRules ? rule.yOffset : yOffset;
+
+            bool needNav = rule.overridePlacementRules ? rule.requireNavMesh : requireNavMesh;
+            float navRadius = rule.overridePlacementRules ? rule.navMeshSearchRadius : navMeshSearchRadius;
+
+            Transform parent = spawnedRoot;
+            if (rule.createSubRoot)
+                parent = EnsureSubRoot(rule.ruleName);
+
+            int spawned = 0;
+            int safetyTries = targetCount * Mathf.Max(1, triesPerMob);
+
+            for (int i = 0; i < safetyTries && spawned < targetCount; i++)
+            {
+                if (!TryFindSpawnPoint(terrain, minXZ, maxXZ, slope, minDist, triesPerMob, yOff, needNav, navRadius,
+                        out Vector3 pos, out Quaternion rot))
+                    continue;
+
+                var prefab = PickWeightedPrefab(rule.prefabs);
+                if (prefab == null) continue;
+
+                var go = Instantiate(prefab, pos, rot, parent);
+
+                var agent = go.GetComponent<NavMeshAgent>();
+                if (agent != null) agent.Warp(pos);
+
+                _spawnedPositions.Add(pos);
+                spawned++;
+            }
+
+            totalSpawned += spawned;
+            Debug.Log($"[MobSpawnerModule] Rule '{rule.ruleName}' spawned {spawned}/{targetCount}");
+        }
+
+        UnityEngine.Random.state = prevState;
+        Debug.Log($"[MobSpawnerModule] Total spawned: {totalSpawned}");
+    }
+
+    private GameObject PickWeightedPrefab(List<WeightedPrefab> list)
+    {
+        float total = 0f;
+        for (int i = 0; i < list.Count; i++)
+        {
+            var w = list[i];
+            if (w == null || w.prefab == null) continue;
+            if (w.weight <= 0f) continue;
+            total += w.weight;
+        }
+
+        // 전부 weight 0이거나 이상하면 그냥 균등 fallback
+        if (total <= 0f)
+        {
+            // null 아닌 prefab 하나라도 찾기
+            for (int i = 0; i < list.Count; i++)
+                if (list[i] != null && list[i].prefab != null)
+                    return list[i].prefab;
+            return null;
+        }
+
+        float r = UnityEngine.Random.value * total;
+        GameObject last = null;
+
+        for (int i = 0; i < list.Count; i++)
+        {
+            var w = list[i];
+            if (w == null || w.prefab == null) continue;
+            if (w.weight <= 0f) continue;
+
+            last = w.prefab;
+            r -= w.weight;
+            if (r <= 0f) return w.prefab;
+        }
+
+        return last;
     }
 
     private void EnsureSpawnedRoot()
     {
         if (spawnedRoot != null) return;
 
-        // 1) 같은 오브젝트 밑에서 먼저 찾기(관리 편함)
         var child = transform.Find(spawnedRootName);
-        if (child != null)
-        {
-            spawnedRoot = child;
-            return;
-        }
+        if (child != null) { spawnedRoot = child; return; }
 
-        // 2) 씬 전체에서 찾기(이미 만들어둔 경우)
         var rootGO = GameObject.Find(spawnedRootName);
         if (rootGO == null)
         {
@@ -108,6 +212,26 @@ public class MobSpawnerModule : MonoBehaviour, ITerrainStep
         }
 
         spawnedRoot = rootGO.transform;
+    }
+
+    private Transform EnsureSubRoot(string ruleName)
+    {
+        if (string.IsNullOrWhiteSpace(ruleName)) ruleName = "Rule";
+
+        if (_subRoots.TryGetValue(ruleName, out var t) && t != null)
+            return t;
+
+        var child = spawnedRoot.Find(ruleName);
+        if (child != null)
+        {
+            _subRoots[ruleName] = child;
+            return child;
+        }
+
+        var go = new GameObject(ruleName);
+        go.transform.SetParent(spawnedRoot, worldPositionStays: true);
+        _subRoots[ruleName] = go.transform;
+        return go.transform;
     }
 
     private void ClearChildren(Transform root)
@@ -137,30 +261,31 @@ public class MobSpawnerModule : MonoBehaviour, ITerrainStep
         maxXZ = new Vector2(tp.x + size.x, tp.z + size.z);
     }
 
-    private bool TryFindSpawnPoint(Terrain t, Vector2 minXZ, Vector2 maxXZ, out Vector3 pos, out Quaternion rot)
+    private bool TryFindSpawnPoint(
+        Terrain t, Vector2 minXZ, Vector2 maxXZ,
+        float slopeAngle, float minDist, int triesPerMob, float yOff,
+        bool needNavMesh, float navRadius,
+        out Vector3 pos, out Quaternion rot)
     {
-        for (int attempt = 0; attempt < maxTriesPerMob; attempt++)
+        for (int attempt = 0; attempt < triesPerMob; attempt++)
         {
-            float x = Random.Range(minXZ.x, maxXZ.x);
-            float z = Random.Range(minXZ.y, maxXZ.y);
+            float x = UnityEngine.Random.Range(minXZ.x, maxXZ.x);
+            float z = UnityEngine.Random.Range(minXZ.y, maxXZ.y);
 
-            // 경사 체크는 TerrainData 노멀로
-            if (!IsSlopeOk(t, x, z, maxSlopeAngle))
+            if (!IsSlopeOk(t, x, z, slopeAngle))
                 continue;
 
-            // Terrain 표면 높이로 y 세팅
-            float y = t.SampleHeight(new Vector3(x, 0f, z)) + t.transform.position.y + yOffset;
+            float y = t.SampleHeight(new Vector3(x, 0f, z)) + t.transform.position.y + yOff;
             Vector3 p = new Vector3(x, y, z);
 
-            if (!IsFarEnough(p, minDistanceBetweenMobs))
+            if (!IsFarEnough(p, minDist))
                 continue;
 
-            rot = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
+            rot = Quaternion.Euler(0f, UnityEngine.Random.Range(0f, 360f), 0f);
 
-            // NavMesh 강제 옵션이면 NavMesh 위로 스냅
-            if (requireNavMesh)
+            if (needNavMesh)
             {
-                if (NavMesh.SamplePosition(p, out var hit, navMeshSearchRadius, NavMesh.AllAreas))
+                if (NavMesh.SamplePosition(p, out var hit, navRadius, NavMesh.AllAreas))
                 {
                     pos = hit.position;
                     return true;
