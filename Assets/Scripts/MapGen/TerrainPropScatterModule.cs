@@ -9,7 +9,7 @@ public class TerrainPropScatterModule : MonoBehaviour, ITerrainStep
     [Serializable]
     public class SpawnRule
     {
-        public string name = "Rocks";
+        public string name = "Props";
         public GameObject[] prefabs;
 
         [Header("How many / chance")]
@@ -32,36 +32,68 @@ public class TerrainPropScatterModule : MonoBehaviour, ITerrainStep
 
         [Header("Scale")]
         public Vector2 uniformScaleRange = new Vector2(0.9f, 1.4f);
+        
+        [Header("Collider & Layer")]
+        [Tooltip("프리팹에 Collider가 없으면 자동 추가")]
+        public bool autoAddCollider = true;
+        public ColliderType colliderType = ColliderType.Capsule;
+        
+        [Tooltip("레이어 설정 (비워두면 Default)")]
+        public string layerName = "Default";
+        
+        [Tooltip("크기별 레이어 분리 (예: 큰 돌만 Obstacle)")]
+        public bool useSizeBasedLayer = false;
+        public float minSizeForObstacle = 1.2f;
+        public string obstacleLayerName = "Obstacle";
 
         [Header("Optional: prefer rocky area")]
-        public TerrainFeatureHeightModule featureModule; // 있으면 rockMask 활용
+        public TerrainFeatureHeightModule featureModule;
         [Range(0f, 1f)] public float rockMaskMin01 = 0.0f;
         [Range(0f, 3f)] public float rockMaskChanceBoost = 1.0f;
     }
+    
+    public enum ColliderType
+    {
+        None,
+        Capsule,
+        Box,
+        Sphere
+    }
 
-    // ✅ 이게 Inspector에 보여야 정상
     public List<SpawnRule> rules = new List<SpawnRule>();
+    
+    [Header("Root")]
+    public string propsRootName = "PropsRoot";
 
     public void Apply(Terrain terrain, int seed)
     {
-        if (rules == null || rules.Count == 0) return;
+        if (rules == null || rules.Count == 0)
+        {
+            Debug.LogWarning("[TerrainPropScatterModule] Rules가 비어있습니다");
+            return;
+        }
 
         var td = terrain.terrainData;
         float sizeX = td.size.x;
         float sizeZ = td.size.z;
 
-        // 이전 랜덤 상태 보존(다른 모듈과 독립적으로)
         var prev = UnityEngine.Random.state;
 
-        // 생성된 구조물 담을 부모(정리용)
-        Transform root = transform.Find("PropsRoot");
+        Transform root = transform.Find(propsRootName);
         if (root == null)
         {
-            var go = new GameObject("PropsRoot");
+            var go = new GameObject(propsRootName);
             go.transform.SetParent(transform);
             go.transform.localPosition = Vector3.zero;
             root = go.transform;
         }
+        else
+        {
+            // 기존 오브젝트 정리
+            ClearChildren(root);
+        }
+
+        int totalPlaced = 0;
 
         for (int ri = 0; ri < rules.Count; ri++)
         {
@@ -124,12 +156,119 @@ public class TerrainPropScatterModule : MonoBehaviour, ITerrainStep
                 var prefab = r.prefabs[UnityEngine.Random.Range(0, r.prefabs.Length)];
                 var go = Instantiate(prefab, worldPos, rot, root);
                 go.transform.localScale *= sc;
+                
+                // Collider 자동 추가
+                if (r.autoAddCollider)
+                {
+                    EnsureCollider(go, r.colliderType, sc);
+                }
+                
+                // 레이어 설정
+                AssignLayer(go, r, sc);
 
                 made++;
             }
+            
+            totalPlaced += made;
+            Debug.Log($"[TerrainPropScatterModule] '{r.name}': {made}/{r.targetCount} 배치 완료");
         }
 
         UnityEngine.Random.state = prev;
+        Debug.Log($"[TerrainPropScatterModule] 총 {totalPlaced}개 오브젝트 배치 완료");
+    }
+    
+    private void EnsureCollider(GameObject obj, ColliderType type, float scale)
+    {
+        if (type == ColliderType.None) return;
+        
+        // 이미 Collider가 있으면 패스
+        var existingColliders = obj.GetComponentsInChildren<Collider>();
+        if (existingColliders.Length > 0) return;
+        
+        switch (type)
+        {
+            case ColliderType.Capsule:
+                var capsule = obj.AddComponent<CapsuleCollider>();
+                capsule.center = new Vector3(0f, 2f * scale, 0f);
+                capsule.radius = 0.3f * scale;
+                capsule.height = 4f * scale;
+                capsule.direction = 1; // Y축
+                break;
+                
+            case ColliderType.Box:
+                var box = obj.AddComponent<BoxCollider>();
+                box.center = new Vector3(0f, 1f * scale, 0f);
+                box.size = new Vector3(1f * scale, 2f * scale, 1f * scale);
+                break;
+                
+            case ColliderType.Sphere:
+                var sphere = obj.AddComponent<SphereCollider>();
+                sphere.center = new Vector3(0f, 1f * scale, 0f);
+                sphere.radius = 1f * scale;
+                break;
+        }
+    }
+    
+    private void AssignLayer(GameObject obj, SpawnRule rule, float scale)
+    {
+        int layer = 0; // Default
+        
+        if (rule.useSizeBasedLayer)
+        {
+            // 크기별 레이어 분리
+            if (scale >= rule.minSizeForObstacle)
+            {
+                layer = LayerMask.NameToLayer(rule.obstacleLayerName);
+                if (layer < 0)
+                {
+                    Debug.LogWarning($"[TerrainPropScatterModule] 레이어 '{rule.obstacleLayerName}'를 찾을 수 없습니다");
+                    layer = 0;
+                }
+            }
+            else
+            {
+                layer = LayerMask.NameToLayer(rule.layerName);
+                if (layer < 0) layer = 0;
+            }
+        }
+        else
+        {
+            // 고정 레이어
+            layer = LayerMask.NameToLayer(rule.layerName);
+            if (layer < 0)
+            {
+                if (!string.IsNullOrEmpty(rule.layerName) && rule.layerName != "Default")
+                {
+                    Debug.LogWarning($"[TerrainPropScatterModule] 레이어 '{rule.layerName}'를 찾을 수 없습니다");
+                }
+                layer = 0;
+            }
+        }
+        
+        SetLayerRecursively(obj.transform, layer);
+    }
+    
+    private void SetLayerRecursively(Transform tr, int layer)
+    {
+        tr.gameObject.layer = layer;
+        for (int i = 0; i < tr.childCount; i++)
+        {
+            SetLayerRecursively(tr.GetChild(i), layer);
+        }
+    }
+    
+    private void ClearChildren(Transform root)
+    {
+        if (root == null) return;
+        
+        for (int i = root.childCount - 1; i >= 0; i--)
+        {
+            var c = root.GetChild(i).gameObject;
+            if (Application.isPlaying)
+                Destroy(c);
+            else
+                DestroyImmediate(c);
+        }
     }
 
     private static bool FarEnough(List<Vector2> placed, float x, float z, float minDist)

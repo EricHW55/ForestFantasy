@@ -13,6 +13,11 @@ public class GoblinAI : MonoBehaviour
     public Transform player;
     public string playerTag = "Player";
     public Transform playerLookTransform;
+    
+    [Header("Movement Mode")]
+    public bool useNavMesh = true;
+    public LayerMask groundMask = ~0;
+    public float groundCheckDistance = 5f;
 
     [Header("Vision")]
     public float viewRange = 14f;
@@ -40,9 +45,9 @@ public class GoblinAI : MonoBehaviour
 
     [Header("Actions / Dialogue")]
     public Vector2 action1Interval = new Vector2(4f, 8f);
-    public Vector2 action1SpeedRange = new Vector2(1.0f, 2.0f);
-    [Range(0f, 1f)] public float action2ChanceOnPause = 0.02f;
-    [Range(0f, 1f)] public float dialogueChanceOnPause = 0.3f;
+    public Vector2 action1SpeedRange = new Vector2(1.5f, 2.5f);
+    [Range(0f, 1f)] public float action2ChanceOnPause = 0.01f;
+    [Range(0f, 1f)] public float dialogueChanceOnPause = 0.4f;
     public float dialogueDistance = 3f;
     public float dialogueTurnSpeed = 360f;
 
@@ -108,9 +113,20 @@ public class GoblinAI : MonoBehaviour
         if (!agent) agent = GetComponent<NavMeshAgent>();
         if (!animator) animator = GetComponentInChildren<Animator>();
         
-        agent.updateRotation = false;
-        agent.angularSpeed = turnSpeed;
-        if (animator) animator.applyRootMotion = false;
+        if (useNavMesh && agent)
+        {
+            agent.updateRotation = false;
+            agent.angularSpeed = turnSpeed;
+            if (animator) animator.applyRootMotion = false;
+            
+            // 초기화 시 비활성화 (NavMesh 배치 전)
+            agent.enabled = false;
+        }
+        else if (agent)
+        {
+            // NavMesh 사용 안 할 경우 비활성화
+            agent.enabled = false;
+        }
         
         if (!group) group = GetComponentInParent<GoblinGroup>();
         if (group) group.Register(this);
@@ -118,12 +134,7 @@ public class GoblinAI : MonoBehaviour
         ScheduleNextAction();
         DecideNewWanderTarget();
     }
-
-    private void OnDestroy()
-    {
-        if (group) group.Unregister(this);
-    }
-
+    
     private void Start()
     {
         if (!player)
@@ -133,6 +144,27 @@ public class GoblinAI : MonoBehaviour
         }
         if (!playerLookTransform && Camera.main) 
             playerLookTransform = Camera.main.transform;
+        
+        // NavMesh에 배치 후 활성화
+        if (useNavMesh && agent)
+        {
+            // 0.5초 후 활성화 (NavMesh 베이크 대기)
+            Invoke(nameof(EnableAgent), 0.5f);
+        }
+    }
+    
+    private void EnableAgent()
+    {
+        if (agent && useNavMesh)
+        {
+            agent.enabled = true;
+            
+            // NavMesh에 제대로 배치되었는지 확인
+            if (!agent.isOnNavMesh)
+            {
+                Debug.LogWarning($"[GoblinAI] {name}이(가) NavMesh 위에 없습니다!");
+            }
+        }
     }
 
     private void Update()
@@ -738,19 +770,58 @@ public class GoblinAI : MonoBehaviour
             _currentSpeed = Mathf.Max(_currentSpeed - deceleration * Time.deltaTime, _targetSpeed);
         }
         
-        agent.speed = _currentSpeed;
-        agent.SetDestination(target);
-        
-        Vector3 dir = agent.desiredVelocity;
-        if (dir.sqrMagnitude > 0.01f)
+        if (useNavMesh && agent && agent.enabled)
         {
-            Quaternion targetRot = Quaternion.LookRotation(dir.normalized);
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRot, turnSpeed * Time.deltaTime);
-        }
+            // NavMesh 방식
+            agent.speed = _currentSpeed;
+            agent.SetDestination(target);
+            
+            Vector3 dir = agent.desiredVelocity;
+            if (dir.sqrMagnitude > 0.01f)
+            {
+                Quaternion targetRot = Quaternion.LookRotation(dir.normalized);
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRot, turnSpeed * Time.deltaTime);
+            }
 
-        // 애니메이션 속도를 현재 실제 속도에 맞춤
-        float vel = agent.velocity.magnitude;
-        UpdateAnimatorSpeed(vel / Mathf.Max(0.01f, sprintSpeed));
+            float vel = agent.velocity.magnitude;
+            UpdateAnimatorSpeed(vel / Mathf.Max(0.01f, sprintSpeed));
+        }
+        else
+        {
+            // 수동 방식 (Imp/OneEye 스타일)
+            Vector3 pos = transform.position;
+            Vector3 to = target - pos;
+            to.y = 0f;
+            
+            float dist = to.magnitude;
+            if (dist > arriveDistance)
+            {
+                Vector3 dir = to / Mathf.Max(dist, 0.0001f);
+                
+                if (dir.sqrMagnitude > 0.0001f)
+                {
+                    Quaternion targetRot = Quaternion.LookRotation(dir, Vector3.up);
+                    transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRot, turnSpeed * Time.deltaTime);
+                }
+                
+                transform.position += transform.forward * (_currentSpeed * Time.deltaTime);
+                StickToGroundManual();
+            }
+            
+            UpdateAnimatorSpeed(_currentSpeed / Mathf.Max(0.01f, sprintSpeed));
+        }
+    }
+    
+    private void StickToGroundManual()
+    {
+        Vector3 pos = transform.position;
+        Vector3 origin = pos + Vector3.up * 5f;
+        
+        if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, groundCheckDistance, groundMask, QueryTriggerInteraction.Ignore))
+        {
+            pos.y = hit.point.y + 0.1f;
+            transform.position = pos;
+        }
     }
 
     private void FaceToTarget(Vector3 worldPos, float speed)

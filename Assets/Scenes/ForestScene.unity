@@ -443,7 +443,6 @@ GameObject:
   - component: {fileID: 793008219}
   - component: {fileID: 793008218}
   - component: {fileID: 793008217}
-  - component: {fileID: 793008216}
   - component: {fileID: 793008215}
   - component: {fileID: 793008214}
   - component: {fileID: 793008222}
@@ -497,27 +496,6 @@ MonoBehaviour:
   minHeight01: 0.05
   maxSlope01: 0.35
   caveYOffset: -1
---- !u!114 &793008216
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 793008213}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f2d060e4ca34c7b44a48e0511aad968c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  treePrefabs:
-  - {fileID: 1148613061152340, guid: eded051879df4c147b9010199d240258, type: 3}
-  - {fileID: 919132149155446097, guid: 00ada2d395936fe4089b5fcb2f519b95, type: 3}
-  - {fileID: 4570594112744518023, guid: f33ad934dfd440e4c96b0ca0f308ee97, type: 3}
-  - {fileID: 3292778667535117986, guid: a043556d7205f99439bbb888232fbc9a, type: 3}
-  treeCount: 4000
-  minHeight01: 0.05
-  maxHeight01: 0.75
-  maxSlope01: 0.4
 --- !u!114 &793008217
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -653,15 +631,41 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rules:
+  - name: Trees
+    prefabs:
+    - {fileID: 1148613061152340, guid: eded051879df4c147b9010199d240258, type: 3}
+    - {fileID: 919132149155446097, guid: 00ada2d395936fe4089b5fcb2f519b95, type: 3}
+    - {fileID: 4570594112744518023, guid: f33ad934dfd440e4c96b0ca0f308ee97, type: 3}
+    - {fileID: 3292778667535117986, guid: a043556d7205f99439bbb888232fbc9a, type: 3}
+    targetCount: 4000
+    spawnChance: 1
+    triesMultiplier: 5
+    minHeight01: 0.05
+    maxHeight01: 0.75
+    maxSlope01: 0.4
+    minDistanceMeters: 3
+    alignToTerrainNormal: 0
+    randomYaw: 1
+    yOffset: -0.01
+    uniformScaleRange: {x: 1, y: 1}
+    autoAddCollider: 1
+    colliderType: 1
+    layerName: Obstacle
+    useSizeBasedLayer: 0
+    minSizeForObstacle: 1
+    obstacleLayerName: Obstacle
+    featureModule: {fileID: 0}
+    rockMaskMin01: 0.15
+    rockMaskChanceBoost: 1.5
   - name: Rock
     prefabs:
     - {fileID: 919132149155446097, guid: d48fdc7a14be275439446b67c627d81d, type: 3}
     - {fileID: 919132149155446097, guid: a622235817abd68429dbbed4ed1d8ff1, type: 3}
     - {fileID: 919132149155446097, guid: b425921fa4ac27b40a9228c338761926, type: 3}
     - {fileID: 919132149155446097, guid: e607c9ea3a77c844db7c1a3f2d180ce1, type: 3}
-    - {fileID: 336222436434858099, guid: bc51859a359a6124d9240419fc73341a, type: 3}
     - {fileID: 1562119382739742, guid: c07f24e35f07ce74ba43afa35d48adf7, type: 3}
     - {fileID: 1220206043906976, guid: 86263e8355f96ba4ab9fdf4e96c2090f, type: 3}
+    - {fileID: 1128399435428950, guid: 94a3318e328358d4095f16b054b14180, type: 3}
     targetCount: 600
     spawnChance: 0.4
     triesMultiplier: 6
@@ -673,6 +677,12 @@ MonoBehaviour:
     randomYaw: 1
     yOffset: -0.08
     uniformScaleRange: {x: 1, y: 1.2}
+    autoAddCollider: 1
+    colliderType: 2
+    layerName: Obstacle
+    useSizeBasedLayer: 0
+    minSizeForObstacle: 1.2
+    obstacleLayerName: Obstacle
     featureModule: {fileID: 0}
     rockMaskMin01: 0.15
     rockMaskChanceBoost: 1.5
@@ -680,7 +690,7 @@ MonoBehaviour:
     prefabs:
     - {fileID: 1043896297628826, guid: 5a21074ccac8b1e40a90e2b16e16afa4, type: 3}
     - {fileID: 1844832195497820, guid: ed5f82224b99b30438c4330a2dca3429, type: 3}
-    targetCount: 400
+    targetCount: 300
     spawnChance: 0.3
     triesMultiplier: 6
     minHeight01: 0.04
@@ -691,6 +701,12 @@ MonoBehaviour:
     randomYaw: 1
     yOffset: -0.02
     uniformScaleRange: {x: 1.2, y: 1.2}
+    autoAddCollider: 1
+    colliderType: 3
+    layerName: Default
+    useSizeBasedLayer: 0
+    minSizeForObstacle: 1.2
+    obstacleLayerName: Obstacle
     featureModule: {fileID: 0}
     rockMaskMin01: 0.15
     rockMaskChanceBoost: 1.5
@@ -703,7 +719,7 @@ MonoBehaviour:
     - {fileID: 1957529895149934, guid: 5c11b6a454fa5fd458d541957f1de507, type: 3}
     targetCount: 1000
     spawnChance: 1
-    triesMultiplier: 12
+    triesMultiplier: 4
     minHeight01: 0.04
     maxHeight01: 0.75
     maxSlope01: 0.6
@@ -712,9 +728,16 @@ MonoBehaviour:
     randomYaw: 1
     yOffset: -0.01
     uniformScaleRange: {x: 1.2, y: 1.2}
+    autoAddCollider: 0
+    colliderType: 3
+    layerName: Default
+    useSizeBasedLayer: 0
+    minSizeForObstacle: 1.2
+    obstacleLayerName: Obstacle
     featureModule: {fileID: 0}
     rockMaskMin01: 0.15
     rockMaskChanceBoost: 1.5
+  propsRootName: PropsRoot
 --- !u!114 &793008223
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -845,8 +868,7 @@ MonoBehaviour:
   spawnedRoot: {fileID: 665971563}
   spawnedRootName: Mobs_Root
   parentRootToThisObject: 1
-  clearPrevious: 1
-  goblinRootName: Goblin
+  clearPrevious: 0
   useWholeTerrain: 1
   areaMinXZ: {x: 0, y: 0}
   areaMaxXZ: {x: 100, y: 100}
@@ -863,16 +885,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12a9cbbff8d404c4cbef8262365811b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  surface: {fileID: 0}
+  surface: {fileID: 2008262560}
+  groundLayerName: Ground
+  obstacleLayerName: Obstacle
+  includeObstacleInBake: 1
+  useLargeObstaclesOnly: 0
+  minObstacleSize: 1.5
   overrideSettings: 1
   collectObjects: 0
   useGeometry: 1
-  layerMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
   defaultArea: 0
   clearBeforeBuild: 1
   logBuildInfo: 1
+  autoAssignLayers: 1
+  terrainObjectName: Terrain
+  mapRootName: Map
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -1346,7 +1373,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2008262559}
-  - component: {fileID: 2008262558}
+  - component: {fileID: 2008262560}
   m_Layer: 0
   m_Name: Navigation
   m_TagString: Untagged
@@ -1354,7 +1381,22 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &2008262558
+--- !u!4 &2008262559
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2008262557}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 838.7453, y: 72.44725, z: 182.60725}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 793008221}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2008262560
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1381,25 +1423,10 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 1
-  m_VoxelSize: 0.11666667
-  m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: e4cd1ce0e50cb354287b0925c02278a2, type: 2}
+  m_VoxelSize: 0.15
+  m_MinRegionArea: 4
+  m_NavMeshData: {fileID: 23800000, guid: 045d911f367fcb140bc85e95b03d224b, type: 2}
   m_BuildHeightMesh: 0
---- !u!4 &2008262559
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2008262557}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 838.7453, y: 72.44725, z: 182.60725}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 793008221}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2037502295
 GameObject:
   m_ObjectHideFlags: 0
