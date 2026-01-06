@@ -1,20 +1,28 @@
 using UnityEngine;
+using UnityEngine.AI;
 
+[RequireComponent(typeof(NavMeshAgent))]
 public class OneEyeAI : MonoBehaviour
 {
     [Header("Refs")]
-    public Animator animator;                 // 비우면 자동 Get
-    public Transform playerTarget;            // 비우면 tag로 찾음
+    public NavMeshAgent agent;
+    public Animator animator;
+    public Transform playerTarget;
     public string playerTag = "Player";
+
+    [Header("Movement Mode")]
+    public bool useNavMesh = true;
+    public LayerMask groundMask = ~0;
+    public float groundCheckDistance = 5f;
 
     [Header("Vision (NEW)")]
     public bool useFieldOfView = true;
-    [Range(1f, 179f)] public float viewAngle = 120f;     // 시야각(도)
-    public float eyeHeight = 1.6f;                        // 시야 Ray 시작 높이
-    public float targetHeight = 1.2f;                     // 플레이어 쪽 Ray 목표 높이
-    public bool requireLineOfSight = false;               // 벽 뒤는 못봄
-    public LayerMask visionBlockers = ~0;                 // 가리는 레이어
-    public float forgetTargetAfter = 1.2f;                // 추격 중 시야 잃고 이 시간 지나면 포기
+    [Range(1f, 179f)] public float viewAngle = 120f;
+    public float eyeHeight = 1.6f;
+    public float targetHeight = 1.2f;
+    public bool requireLineOfSight = false;
+    public LayerMask visionBlockers = ~0;
+    public float forgetTargetAfter = 1.2f;
 
     [Header("Wander")]
     public float wanderRadius = 10f;
@@ -38,25 +46,14 @@ public class OneEyeAI : MonoBehaviour
     [Header("Detect / Chase")]
     public float detectRadius = 20f;
     public float loseRadius = 28f;
-
-    [Tooltip("추격 기본 속도(달리기)")]
     public float chaseSpeed = 5.5f;
-
-    [Tooltip("추격 가속도(현재 속도가 maxSpeed로 올라가는 속도)")]
     public float chaseAcceleration = 14f;
-
     public float chaseTurnSpeed = 360f;
 
     [Header("Sprint (NEW)")]
     public bool enableSprint = true;
-
-    [Tooltip("추격을 시작하고 이 시간이 지나면 질주 쪽으로 maxSpeed를 올리기 시작")]
     public float sprintDelay = 0.6f;
-
-    [Tooltip("질주 최고 속도")]
     public float sprintSpeed = 8.0f;
-
-    [Tooltip("maxSpeed(=chaseSpeed->sprintSpeed)가 올라가는 속도(초당 몇 m/s 올라갈지)")]
     public float sprintMaxSpeedRamp = 6.0f;
 
     [Header("Attack")]
@@ -64,18 +61,13 @@ public class OneEyeAI : MonoBehaviour
     public float attackStartRadius = 2.7f;
     public float attackHitRadius = 3.0f;
     public int attackDamage = 10;
-
-    [Tooltip("공격 끝난 뒤 추가 텀(0이면 거의 바로 다시 행동)")]
     public float attackCooldown = 0.0f;
-
-    [Tooltip("공격 모션 중 데미지 들어가는 시점(초)")]
     public float attackHitDelay = 0.25f;
 
     [Header("Damage Reaction")]
     public float damageCooldown = 0.15f;
 
     [Header("Ground (optional)")]
-    public LayerMask groundMask = ~0;
     public float yOffset = 0.02f;
 
     [Header("Animator Params")]
@@ -88,23 +80,11 @@ public class OneEyeAI : MonoBehaviour
 
     [Header("Animator Speed (NEW)")]
     public bool driveAnimatorSpeed = true;
-
-    [Tooltip("배회(walk) 애니 기본 배속(조금만 올리고 싶으면 1.05~1.25)")]
     public float walkAnimSpeed = 1.15f;
-
-    [Tooltip("추격(run) 애니 기본 배속")]
     public float runAnimSpeed = 1.75f;
-
-    [Tooltip("질주(sprint) 애니 배속(추격이 가속될수록 이쪽으로 접근)")]
     public float sprintAnimSpeed = 2.1f;
-
-    [Tooltip("공격 애니 배속(너무 빨라지면 이상해서 보통 1.0~1.15)")]
     public float attackAnimSpeed = 1.0f;
-
-    [Tooltip("액션(제자리 제스처) 애니 배속")]
     public float actionAnimSpeed = 1.0f;
-
-    [Tooltip("애니 speed가 갑자기 튀지 않게 부드럽게 따라가게 하는 정도(클수록 빨리 따라감)")]
     public float animSpeedDamp = 8f;
 
     [Header("Lock")]
@@ -124,6 +104,7 @@ public class OneEyeAI : MonoBehaviour
     float _nextRepathTime;
 
     float _curSpeed;
+    float _targetSpeed;
 
     float _nextPauseAt;
     float _pauseUntil;
@@ -140,13 +121,26 @@ public class OneEyeAI : MonoBehaviour
 
     float _lastSeenTime = -999f;
 
-    // Sprint runtime
     float _chaseStartedAt = -999f;
-    float _chaseMaxSpeed; // 추격 중 현재 maxSpeed(=점점 sprint로 상승)
+    float _chaseMaxSpeed;
 
     void Awake()
     {
+        if (!agent) agent = GetComponent<NavMeshAgent>();
         if (!animator) animator = GetComponentInChildren<Animator>();
+
+        if (useNavMesh && agent)
+        {
+            agent.updateRotation = false;
+            agent.angularSpeed = chaseTurnSpeed;
+            if (animator && forceDisableRootMotion) 
+                animator.applyRootMotion = false;
+            agent.enabled = false;
+        }
+        else if (agent)
+        {
+            agent.enabled = false;
+        }
 
         if (animator && forceDisableRootMotion)
             animator.applyRootMotion = false;
@@ -155,6 +149,29 @@ public class OneEyeAI : MonoBehaviour
 
         PickNewWanderTarget();
         ScheduleNextPause();
+    }
+
+    void Start()
+    {
+        ResolvePlayerTarget();
+        
+        if (useNavMesh && agent)
+        {
+            Invoke(nameof(EnableAgent), 0.5f);
+        }
+    }
+
+    void EnableAgent()
+    {
+        if (agent && useNavMesh)
+        {
+            agent.enabled = true;
+            
+            if (!agent.isOnNavMesh)
+            {
+                Debug.LogWarning($"[OneEyeAI] {name}이(가) NavMesh 위에 없습니다!");
+            }
+        }
     }
 
     bool IsBusyAnim()
@@ -182,9 +199,13 @@ public class OneEyeAI : MonoBehaviour
         if (Time.time < _lockUntil)
         {
             _curSpeed = 0f;
+            if (useNavMesh && agent && agent.enabled)
+                agent.velocity = Vector3.zero;
+                
             if (_state == State.Attack) TickAttack();
 
-            StickToGround();
+            if (!useNavMesh || !agent || !agent.enabled)
+                StickToGround();
             UpdateAnimatorParams();
             return;
         }
@@ -192,9 +213,13 @@ public class OneEyeAI : MonoBehaviour
         if (IsBusyAnim())
         {
             _curSpeed = 0f;
+            if (useNavMesh && agent && agent.enabled)
+                agent.velocity = Vector3.zero;
+                
             if (_state == State.Attack) TickAttack();
 
-            StickToGround();
+            if (!useNavMesh || !agent || !agent.enabled)
+                StickToGround();
             UpdateAnimatorParams();
             return;
         }
@@ -204,7 +229,8 @@ public class OneEyeAI : MonoBehaviour
         if (_skipMoveThisFrame)
         {
             _skipMoveThisFrame = false;
-            StickToGround();
+            if (!useNavMesh || !agent || !agent.enabled)
+                StickToGround();
             UpdateAnimatorParams();
             return;
         }
@@ -218,7 +244,8 @@ public class OneEyeAI : MonoBehaviour
             case State.Damaged:     break;
         }
 
-        StickToGround();
+        if (!useNavMesh || !agent || !agent.enabled)
+            StickToGround();
         UpdateAnimatorParams();
     }
 
@@ -231,7 +258,6 @@ public class OneEyeAI : MonoBehaviour
         if (go) playerTarget = go.transform;
     }
 
-    // ===== Vision =====
     bool CanSeePlayer()
     {
         if (!playerTarget) return false;
@@ -283,14 +309,13 @@ public class OneEyeAI : MonoBehaviour
         if (prev == State.Chase) return;
 
         _chaseStartedAt = Time.time;
-        _chaseMaxSpeed = chaseSpeed; // 추격 시작은 run 속도부터
+        _chaseMaxSpeed = chaseSpeed;
     }
 
     void ExitChaseIfNeeded(State next)
     {
         if (next == State.Chase) return;
 
-        // 추격이 끝나면 다시 기본값
         _chaseMaxSpeed = chaseSpeed;
         _chaseStartedAt = -999f;
     }
@@ -312,7 +337,6 @@ public class OneEyeAI : MonoBehaviour
         bool canSee = CanSeePlayer();
         if (canSee) _lastSeenTime = Time.time;
 
-        // 공격: 거리만으로 바로(가까우면 돌면서 때리는 느낌)
         if (d <= attackStartRadius && Time.time >= _nextAttackReady)
         {
             ExitChaseIfNeeded(State.Attack);
@@ -341,7 +365,6 @@ public class OneEyeAI : MonoBehaviour
             return;
         }
 
-        // Wander 상태에서 발견은 FOV 조건 필요
         if (canSee)
         {
             State prev = _state;
@@ -372,7 +395,6 @@ public class OneEyeAI : MonoBehaviour
         }
     }
 
-    // ===== Wander =====
     void DoWanderMove()
     {
         if (Time.time >= _nextRepathTime)
@@ -424,6 +446,8 @@ public class OneEyeAI : MonoBehaviour
     void DoWanderPause()
     {
         _curSpeed = 0f;
+        if (useNavMesh && agent && agent.enabled)
+            agent.velocity = Vector3.zero;
 
         if (Time.time >= _pauseUntil)
         {
@@ -433,21 +457,18 @@ public class OneEyeAI : MonoBehaviour
         }
     }
 
-    // ===== Chase =====
     void DoChase()
     {
         if (!playerTarget) { _state = State.WanderMove; return; }
 
         float d = FlatDistance(transform.position, playerTarget.position);
 
-        // 추격 중에도 범위면 즉시 공격
         if (d <= attackStartRadius && Time.time >= _nextAttackReady)
         {
             StartAttack();
             return;
         }
 
-        // 질주 maxSpeed로 “점점” 올리기(Imp처럼)
         float desiredMax = chaseSpeed;
         if (enableSprint)
         {
@@ -456,12 +477,13 @@ public class OneEyeAI : MonoBehaviour
                 desiredMax = Mathf.Max(chaseSpeed, sprintSpeed);
         }
 
-        // maxSpeed가 목표로 서서히 올라감(실제 속도는 chaseAcceleration로 또 올라감)
         _chaseMaxSpeed = Mathf.MoveTowards(_chaseMaxSpeed, desiredMax, sprintMaxSpeedRamp * Time.deltaTime);
 
         if (d <= attackStopRadius)
         {
             StopNow();
+            if (useNavMesh && agent && agent.enabled)
+                agent.velocity = Vector3.zero;
             FaceTarget(playerTarget.position, chaseTurnSpeed);
             return;
         }
@@ -469,12 +491,14 @@ public class OneEyeAI : MonoBehaviour
         MoveTowards(playerTarget.position, _chaseMaxSpeed, chaseAcceleration, attackStopRadius, chaseTurnSpeed);
     }
 
-    // ===== Attack =====
     void StartAttack()
     {
         _state = State.Attack;
 
         StopNow();
+        if (useNavMesh && agent && agent.enabled)
+            agent.velocity = Vector3.zero;
+            
         _damageApplied = false;
 
         FireTrigger(attackTrigger);
@@ -527,6 +551,9 @@ public class OneEyeAI : MonoBehaviour
         animator.ResetTrigger(action2Trigger);
 
         StopNow();
+        if (useNavMesh && agent && agent.enabled)
+            agent.velocity = Vector3.zero;
+            
         FireTrigger(damageTrigger);
 
         _state = State.Damaged;
@@ -534,33 +561,57 @@ public class OneEyeAI : MonoBehaviour
         _skipMoveThisFrame = true;
     }
 
-    // ===== Move / Rotate =====
-    void StopNow() => _curSpeed = 0f;
+    void StopNow() 
+    { 
+        _curSpeed = 0f;
+        _targetSpeed = 0f;
+    }
 
     void MoveTowards(Vector3 worldTarget, float maxSpeed, float accel, float stopDistance, float turnSpeedDeg)
     {
-        Vector3 pos = transform.position;
-        Vector3 to = worldTarget - pos;
-        to.y = 0f;
+        _targetSpeed = maxSpeed;
 
-        float dist = to.magnitude;
+        if (_curSpeed < _targetSpeed)
+            _curSpeed = Mathf.Min(_curSpeed + accel * Time.deltaTime, _targetSpeed);
+        else if (_curSpeed > _targetSpeed)
+            _curSpeed = Mathf.Max(_curSpeed - accel * Time.deltaTime, _targetSpeed);
 
-        if (dist <= stopDistance)
+        if (useNavMesh && agent && agent.enabled)
         {
-            _curSpeed = Mathf.MoveTowards(_curSpeed, 0f, accel * Time.deltaTime);
-            return;
+            agent.speed = _curSpeed;
+            agent.SetDestination(worldTarget);
+
+            Vector3 dir = agent.desiredVelocity;
+            if (dir.sqrMagnitude > 0.01f)
+            {
+                Quaternion targetRot = Quaternion.LookRotation(dir.normalized);
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRot, turnSpeedDeg * Time.deltaTime);
+            }
         }
-
-        Vector3 dir = to / Mathf.Max(dist, 0.0001f);
-
-        if (dir.sqrMagnitude > 0.0001f)
+        else
         {
-            Quaternion targetRot = Quaternion.LookRotation(dir, Vector3.up);
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRot, turnSpeedDeg * Time.deltaTime);
-        }
+            Vector3 pos = transform.position;
+            Vector3 to = worldTarget - pos;
+            to.y = 0f;
 
-        _curSpeed = Mathf.MoveTowards(_curSpeed, maxSpeed, accel * Time.deltaTime);
-        transform.position += transform.forward * (_curSpeed * Time.deltaTime);
+            float dist = to.magnitude;
+
+            if (dist <= stopDistance)
+            {
+                _curSpeed = Mathf.MoveTowards(_curSpeed, 0f, accel * Time.deltaTime);
+                return;
+            }
+
+            Vector3 dir = to / Mathf.Max(dist, 0.0001f);
+
+            if (dir.sqrMagnitude > 0.0001f)
+            {
+                Quaternion targetRot = Quaternion.LookRotation(dir, Vector3.up);
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRot, turnSpeedDeg * Time.deltaTime);
+            }
+
+            transform.position += transform.forward * (_curSpeed * Time.deltaTime);
+        }
     }
 
     void FaceTarget(Vector3 worldPos, float turnSpeedDeg)
@@ -581,7 +632,16 @@ public class OneEyeAI : MonoBehaviour
         dir = Vector3.ProjectOnPlane(dir, Vector3.up).normalized;
 
         float dist = Random.Range(wanderRadius * 0.3f, wanderRadius);
-        _wanderTarget = transform.position + dir * dist;
+        Vector3 candidate = transform.position + dir * dist;
+        
+        if (useNavMesh && NavMesh.SamplePosition(candidate, out NavMeshHit hit, 5f, NavMesh.AllAreas))
+        {
+            _wanderTarget = hit.position;
+        }
+        else
+        {
+            _wanderTarget = candidate;
+        }
     }
 
     void ScheduleNextPause()
@@ -632,12 +692,10 @@ public class OneEyeAI : MonoBehaviour
         bool chasing = (_state == State.Chase);
         animator.SetBool(isChasingParam, chasing);
 
-        // Speed 파라미터(블렌드 트리/전환용)
         float denom = Mathf.Max(0.001f, (chasing ? _chaseMaxSpeed : wanderSpeed));
         float speed01 = Mathf.Clamp01(_curSpeed / denom);
         animator.SetFloat(speedParam, speed01);
 
-        // === 애니메이션 재생 속도 제어(Imp 방식 확장) ===
         if (!driveAnimatorSpeed) return;
 
         float targetAnim = 1f;
@@ -654,12 +712,10 @@ public class OneEyeAI : MonoBehaviour
             }
             else if (!chasing)
             {
-                // 배회: 1.0 -> walkAnimSpeed (속도 비례)
                 targetAnim = Mathf.Lerp(1.0f, walkAnimSpeed, speed01);
             }
             else
             {
-                // 추격: runAnimSpeed -> sprintAnimSpeed (질주 진행도 + 속도 비례)
                 float sprint01 = 0f;
                 if (enableSprint)
                 {
@@ -668,12 +724,10 @@ public class OneEyeAI : MonoBehaviour
                 }
 
                 float runToSprint = Mathf.Lerp(runAnimSpeed, sprintAnimSpeed, sprint01);
-                // 현재 속도 비례로 조금 더 자연스럽게
                 targetAnim = Mathf.Lerp(walkAnimSpeed, runToSprint, speed01);
             }
         }
 
-        // 부드럽게 따라가기(갑자기 튀는 느낌 제거)
         float k = 1f - Mathf.Exp(-animSpeedDamp * Time.deltaTime);
         animator.speed = Mathf.Lerp(animator.speed, targetAnim, k);
     }
@@ -683,7 +737,7 @@ public class OneEyeAI : MonoBehaviour
         Vector3 pos = transform.position;
         Vector3 origin = pos + Vector3.up * 50f;
 
-        if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, 200f, groundMask, QueryTriggerInteraction.Ignore))
+        if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, groundCheckDistance, groundMask, QueryTriggerInteraction.Ignore))
         {
             pos.y = hit.point.y + yOffset;
             transform.position = pos;

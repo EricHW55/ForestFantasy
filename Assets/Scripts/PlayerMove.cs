@@ -10,14 +10,25 @@ public class PlayerMove : MonoBehaviour
 
     [Header("Jump / Gravity")]
     public float jumpHeight = 1.2f;
-    public float gravity = -9.81f;
+    public float gravity = -35f;
+
+    [Header("Jump Assist")]
+    public float coyoteTime = 0.12f;      // 바닥에서 떨어진 직후도 점프 허용
+    public float jumpBuffer = 0.12f;      // 점프 입력을 잠깐 저장
+    public float groundStickY = -2.0f;      // 바닥에 붙는 힘
+    public float groundProbeDistance = 0.25f; // 접지 보조 체크 거리
+    public float groundProbeRadius = 0.2f;    // 접지 보조 체크 반경
+    public LayerMask groundMask = ~0;     // 필요하면 Ground 레이어로 제한
 
     [Header("Look")]
     public float mouseSensitivity = 2.0f;
 
     private CharacterController controller;
-    private Vector3 velocity; // y는 중력/점프용
+    private Vector3 velocity;
     private float yaw;
+
+    private float lastGroundedTime = -999f;
+    private float lastJumpPressedTime = -999f;
 
     void Start()
     {
@@ -41,20 +52,51 @@ public class PlayerMove : MonoBehaviour
         if (Input.GetKey(KeyCode.LeftShift)) speed *= sprintMultiplier;
         else if (Input.GetKey(KeyCode.LeftControl)) speed *= slowMultiplier;
 
-        controller.Move(move * speed * Time.deltaTime);
+        // 점프 입력 버퍼
+        if (Input.GetKeyDown(KeyCode.Space))
+            lastJumpPressedTime = Time.time;
 
-        // --- ground check & gravity ---
-        if (controller.isGrounded && velocity.y < 0f)
-            velocity.y = -2f; // 바닥에 붙게 살짝 음수
+        // --- grounded (보조 체크 포함) ---
+        bool grounded = controller.isGrounded || ProbeGrounded();
+        if (grounded) lastGroundedTime = Time.time;
 
-        // --- jump ---
-        if (controller.isGrounded && Input.GetKeyDown(KeyCode.Space))
+        // --- gravity / stick ---
+        if (grounded && velocity.y < 0f)
+            velocity.y = groundStickY;
+
+        // --- jump (coyote + buffer) ---
+        bool canCoyote = (Time.time - lastGroundedTime) <= coyoteTime;
+        bool hasBufferedJump = (Time.time - lastJumpPressedTime) <= jumpBuffer;
+
+        if (canCoyote && hasBufferedJump)
         {
-            // v = sqrt(2gh)
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+            lastJumpPressedTime = -999f; // 버퍼 소진
+            lastGroundedTime = -999f;    // 코요테 소진(연속 점프 방지)
         }
 
         velocity.y += gravity * Time.deltaTime;
-        controller.Move(velocity * Time.deltaTime);
+
+        // Move는 가능하면 한 번에
+        Vector3 displacement = (move * speed) + new Vector3(0f, velocity.y, 0f);
+        controller.Move(displacement * Time.deltaTime);
+    }
+
+    // controller.isGrounded가 흔들릴 때 보조로 바닥 체크
+    bool ProbeGrounded()
+    {
+        Vector3 origin = transform.position + controller.center;
+        float castDist = (controller.height * 0.5f) + groundProbeDistance;
+
+        // 아래로 구체 캐스트(경사/요철에서 안정적)
+        return Physics.SphereCast(
+            origin,
+            groundProbeRadius,
+            Vector3.down,
+            out _,
+            castDist,
+            groundMask,
+            QueryTriggerInteraction.Ignore
+        );
     }
 }
