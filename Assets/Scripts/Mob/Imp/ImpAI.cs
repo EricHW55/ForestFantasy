@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
-public class ImpWander : MonoBehaviour
+public class ImpAI : MonoBehaviour
 {
     [Header("Refs")]
     public NavMeshAgent agent;
@@ -263,17 +263,25 @@ public class ImpWander : MonoBehaviour
         float d = FlatDistance(transform.position, playerTarget.position);
         if (d > attackHitRadius) return;
 
+        // IDamageable 인터페이스 체크 (우선순위 1)
         var dmg = playerTarget.GetComponentInParent<IDamageable>();
         if (dmg != null)
         {
-            dmg.TakeDamage(attackDamage);
+            dmg.TakeDamage(attackDamage, gameObject);
             return;
         }
 
+        // Health 컴포넌트 체크 (우선순위 2)
         var hp = playerTarget.GetComponentInParent<Health>();
-        if (hp != null) hp.TakeDamage(attackDamage);
-    }
+        if (hp != null)
+        {
+            hp.TakeDamage(attackDamage, gameObject);
+            return;
+        }
 
+        Debug.LogWarning($"{name}: Target {playerTarget.name} has no IDamageable or Health component!");
+    }
+    
     void EndAttackIfNeeded()
     {
         _attackInProgress = false;

@@ -791,6 +791,29 @@ MonoBehaviour:
     requireNavMesh: 0
     navMeshSearchRadius: 10
     createSubRoot: 1
+  - ruleName: BloodSniffer
+    prefabs:
+    - prefab: {fileID: 2547632407910942000, guid: af9f138ca1214ae41beb955d1406704e,
+        type: 3}
+      weight: 1
+    - prefab: {fileID: 4907239047242697928, guid: 82430f94fd1381c43878fce981a5aa43,
+        type: 3}
+      weight: 1
+    - prefab: {fileID: 6899769094566875523, guid: f3978c44f7fb36246b698fdea7f77528,
+        type: 3}
+      weight: 1
+    useRuleChance: 1
+    ruleChance: 1
+    minCount: 3
+    maxCount: 4
+    overridePlacementRules: 1
+    maxSlopeAngle: 40
+    minDistanceBetweenMobs: 2.8
+    maxTriesPerMob: 40
+    yOffset: 0.02
+    requireNavMesh: 0
+    navMeshSearchRadius: 10
+    createSubRoot: 1
   spawnedRoot: {fileID: 665971563}
   spawnedRootName: Mobs_Root
   parentRootToThisObject: 1
@@ -1220,6 +1243,14 @@ MonoBehaviour:
   slowMultiplier: 0.6
   jumpHeight: 1.2
   gravity: -9.81
+  coyoteTime: 0.12
+  jumpBuffer: 0.12
+  groundStickY: -2
+  groundProbeDistance: 0.25
+  groundProbeRadius: 0.2
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
   mouseSensitivity: 2
 --- !u!143 &1363468250
 CharacterController:

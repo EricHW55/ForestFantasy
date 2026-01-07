@@ -25,6 +25,12 @@ public class BloodSnifferAI : MonoBehaviour
     public float crawlTurnSpeed = 120f;
     [Range(30f, 180f)] public float crawlConeAngle = 120f;
 
+    [Header("Crawl Speed Smoothing")]
+    // ✅ "멈출 때" 감속 속도(이 값이 작을수록 천천히 멈춤)
+    public float crawlDeceleration = 6f;
+    // ✅ 애니 BlendTree Speed 파라미터 댐핑(작을수록 부드럽게)
+    public float speedParamDampTime = 0.12f;
+
     [Header("Crawl Pause / Sniff")]
     public Vector2 pauseEverySeconds = new Vector2(3f, 7f);
     public Vector2 pauseDurationSeconds = new Vector2(0.8f, 2f);
@@ -55,6 +61,9 @@ public class BloodSnifferAI : MonoBehaviour
     public float standSpeedRampRate = 4f;
     public float roarDelay = 1.2f;
 
+    [Header("Stand Stop Smoothing")]
+    public float standChaseDeceleration = 18f;
+
     [Header("Attack")]
     public float attackStopRadius = 1.8f;
     public float attackStartRadius = 2.2f;
@@ -69,13 +78,13 @@ public class BloodSnifferAI : MonoBehaviour
     public bool sliceComboClips = true;
     [Range(0.05f, 1f)] public float punchClipFraction = 0.25f;     // 4연타 중 1타
     [Range(0.05f, 1f)] public float biteClipFraction = 0.3333f;    // 3연타 중 1타
-    public float minAttackWindow = 0.18f;                           // 너무 짧으면 끊겨 보임(최소 보장)
+    public float minAttackWindow = 0.18f;
 
     [Header("Attack - Cancel Option")]
     public bool cancelAttackIfTargetFar = true;
-    public float cancelCheckGrace = 0.05f;                          // 시작 직후 즉시 캔슬되는 거 방지
-    public float cancelDistanceMultiplier = 1.6f;                   // attackStartRadius * 이 값보다 멀면 캔슬
-    public float cancelCooldown = 0.15f;                            // 캔슬 후 바로 재공격 방지
+    public float cancelCheckGrace = 0.05f;
+    public float cancelDistanceMultiplier = 1.6f;
+    public float cancelCooldown = 0.15f;
 
     [Header("Meat Detection")]
     public string meatTag = "Meat";
@@ -116,7 +125,6 @@ public class BloodSnifferAI : MonoBehaviour
     public string damageClipContains = "Damage";
 
     [Header("Force Exit Action (State Names)")]
-    // 네 컨트롤러에서 locomotion state 이름과 같아야 함.
     public string crouchLocomotionState = "BT_CrouchLocomotion";
     public string standLocomotionState = "BT_StandLocomotion_Walk1";
     public float locomotionCrossFade = 0.05f;
@@ -160,10 +168,9 @@ public class BloodSnifferAI : MonoBehaviour
     float _nextDamageReady;
     bool _skipMoveThisFrame;
 
-    // 공격 “부분 재생”/캔슬을 위한 타이밍
-    float _attackEndAt;                // (콤보 중 1타만) 여기까지만 보여주고 끊는다
-    float _attackCanCancelAfter;       // 시작 직후 grace 지나면 캔슬 체크
-    float _ignoreBusyUntil;            // 강제로 locomotion으로 넘길 때 busy 체크 잠깐 무시
+    float _attackEndAt;
+    float _attackCanCancelAfter;
+    float _ignoreBusyUntil;
 
     void Awake()
     {
@@ -175,7 +182,6 @@ public class BloodSnifferAI : MonoBehaviour
             agent.updateRotation = false;
             agent.angularSpeed = standChaseTurnSpeed;
             if (animator) animator.applyRootMotion = false;
-
             agent.enabled = false;
         }
 
@@ -209,8 +215,6 @@ public class BloodSnifferAI : MonoBehaviour
     bool IsBusyAnim()
     {
         if (!animator) return false;
-
-        // 강제로 locomotion으로 끊을 때, busy 체크 잠깐 무시
         if (Time.time < _ignoreBusyUntil) return false;
 
         var cur = animator.GetCurrentAnimatorStateInfo(0);
@@ -231,40 +235,35 @@ public class BloodSnifferAI : MonoBehaviour
     {
         ResolvePlayerTarget();
 
-        // Lock 중: 이동 정지 + 공격 타이밍/캔슬만 처리
+        // Lock 중: ✅ 배회/기어다닐 때는 speed를 0으로 박지 말고 감속
         if (Time.time < _lockUntil)
         {
-            _curSpeed = 0f;
-            StopAgentHard();
-
-            if (_state == State.Attack) TickAttack(); // ✅ 여기서 부분재생 종료/캔슬 처리
+            SoftStopByState();
+            if (_state == State.Attack) TickAttack();
 
             StickToGroundIfNeeded();
             UpdateAnimatorParams();
             return;
         }
 
-        // BusyAnim 중: 이동 정지 + 공격 타이밍/캔슬만 처리
+        // BusyAnim 중: ✅ 배회/기어다닐 때는 speed를 0으로 박지 말고 감속
         if (IsBusyAnim())
         {
-            _curSpeed = 0f;
-            StopAgentHard();
-
-            if (_state == State.Attack) TickAttack(); // ✅ 여기서 부분재생 종료/캔슬 처리
+            SoftStopByState();
+            if (_state == State.Attack) TickAttack();
 
             StickToGroundIfNeeded();
             UpdateAnimatorParams();
             return;
         }
 
-        // Attack 상태인데 lock/busy가 끝났으면(부분재생 기준) 추격으로 복귀
         if (_state == State.Attack)
         {
             _state = State.StandChase;
             _curSpeed = 0f;
+            _targetSpeed = 0f;
         }
 
-        // Damaged 애니 끝나면 복귀
         if (_state == State.Damaged)
         {
             if (animator && animator.GetInteger(stanceParam) == 1) _state = State.StandChase;
@@ -300,14 +299,12 @@ public class BloodSnifferAI : MonoBehaviour
     {
         if (playerTarget) return;
         if (string.IsNullOrEmpty(playerTag)) return;
-
         var go = GameObject.FindGameObjectWithTag(playerTag);
         if (go) playerTarget = go.transform;
     }
 
     void UpdateStateMachine()
     {
-        // 플레이어 감지(최우선)
         if (playerTarget && CanSeePlayer())
         {
             if (_state != State.StandChase)
@@ -318,7 +315,6 @@ public class BloodSnifferAI : MonoBehaviour
             return;
         }
 
-        // Stand에서 플레이어 잃으면 Crawl 복귀
         if (_state == State.StandChase)
         {
             float d = playerTarget ? FlatDistance(transform.position, playerTarget.position) : float.MaxValue;
@@ -330,7 +326,6 @@ public class BloodSnifferAI : MonoBehaviour
             }
         }
 
-        // 고기 감지(Crawl 상태일 때만)
         if (_state == State.CrawlWander || _state == State.CrawlPause || _state == State.CrawlToScent)
         {
             Transform meat = FindNearestMeat();
@@ -342,7 +337,6 @@ public class BloodSnifferAI : MonoBehaviour
             }
         }
 
-        // 피냄새 감지(Crawl 상태일 때만)
         if (_state == State.CrawlWander || _state == State.CrawlPause)
         {
             if (Time.time >= _nextScentCheckTime)
@@ -357,7 +351,9 @@ public class BloodSnifferAI : MonoBehaviour
                     {
                         _currentScent = scent;
 
-                        StopNow();
+                        // ✅ "StopNow()" 삭제: 감속 + 소프트 정지
+                        RequestStopSoft(IsStandStance() ? standChaseDeceleration : crawlDeceleration);
+
                         FireTrigger(sniffTrigger);
                         LockFor(GetLockSeconds(sniffClipContains, 1.0f));
                         _skipMoveThisFrame = true;
@@ -370,7 +366,6 @@ public class BloodSnifferAI : MonoBehaviour
             }
         }
 
-        // CrawlToScent 도달/만료
         if (_state == State.CrawlToScent)
         {
             if (_currentScent == null || _currentScent.IsExpired())
@@ -448,11 +443,14 @@ public class BloodSnifferAI : MonoBehaviour
 
     void EnterStandChase()
     {
-        SetStance(1); // Stand
+        SetStance(1);
         _hasRoared = false;
         _standChaseSpeed = standChaseSpeed;
 
-        StopNow();
+        // 포효는 “딱 멈춰서” 하는 게 자연스러워서 하드 스톱 유지
+        StopNowHard();
+        StopAgentHard();
+
         FireTrigger(roarTrigger);
         LockFor(GetLockSeconds(roarClipContains, roarDelay));
         _roarCompleteTime = Time.time + roarDelay;
@@ -463,7 +461,7 @@ public class BloodSnifferAI : MonoBehaviour
 
     void ExitStandChase()
     {
-        SetStance(2); // Crawl
+        SetStance(2);
         _hasRoared = false;
     }
 
@@ -483,7 +481,8 @@ public class BloodSnifferAI : MonoBehaviour
             _state = State.CrawlPause;
             _pauseUntil = Time.time + Random.Range(pauseDurationSeconds.x, pauseDurationSeconds.y);
 
-            StopNow();
+            // ✅ 여기서 _curSpeed=0 박지 말기
+            RequestStopSoft(crawlDeceleration);
 
             if (Random.value <= sniffChanceOnPause)
             {
@@ -494,7 +493,8 @@ public class BloodSnifferAI : MonoBehaviour
             return;
         }
 
-        MoveTowards(_wanderTarget, crawlSpeed, crawlAcceleration, crawlArriveDist, crawlTurnSpeed);
+        // ✅ 가속/감속 분리 적용
+        MoveTowards(_wanderTarget, crawlSpeed, crawlAcceleration, crawlDeceleration, crawlArriveDist, crawlTurnSpeed);
     }
 
     bool IsDirectionOutsideWanderCone(Vector3 targetPos)
@@ -509,8 +509,8 @@ public class BloodSnifferAI : MonoBehaviour
 
     void DoCrawlPause()
     {
-        _curSpeed = 0f;
-        StopAgentHard();
+        // ✅ Pause 동안에도 부드럽게 감속해서 0으로 수렴
+        RequestStopSoft(crawlDeceleration);
 
         if (Time.time >= _pauseUntil)
         {
@@ -529,7 +529,7 @@ public class BloodSnifferAI : MonoBehaviour
         }
 
         _crawlToScentSpeed = Mathf.MoveTowards(_crawlToScentSpeed, crawlToScentMaxSpeed, crawlSpeedRampRate * Time.deltaTime);
-        MoveTowards(_currentScent.position, _crawlToScentSpeed, crawlAcceleration, scentArriveDistance, crawlTurnSpeed);
+        MoveTowards(_currentScent.position, _crawlToScentSpeed, crawlAcceleration, crawlDeceleration, scentArriveDistance, crawlTurnSpeed);
     }
 
     void DoStandChase()
@@ -541,13 +541,12 @@ public class BloodSnifferAI : MonoBehaviour
             return;
         }
 
-        // Roar 완료 대기
         if (!_hasRoared)
         {
             if (Time.time >= _roarCompleteTime) _hasRoared = true;
             else
             {
-                StopNow();
+                StopNowHard();
                 StopAgentHard();
                 FaceTarget(playerTarget.position, standChaseTurnSpeed);
                 return;
@@ -566,20 +565,20 @@ public class BloodSnifferAI : MonoBehaviour
 
         if (d <= attackStopRadius)
         {
-            StopNow();
-            StopAgentHard();
+            // ✅ stand 정지도 뚝 끊기면 어색하면 아래 한 줄로 부드럽게
+            RequestStopSoft(standChaseDeceleration);
             FaceTarget(playerTarget.position, standChaseTurnSpeed);
             return;
         }
 
-        MoveTowards(playerTarget.position, _standChaseSpeed, standChaseAcceleration, attackStopRadius, standChaseTurnSpeed);
+        MoveTowards(playerTarget.position, _standChaseSpeed, standChaseAcceleration, standChaseDeceleration, attackStopRadius, standChaseTurnSpeed);
     }
 
     void StartAttack()
     {
         _state = State.Attack;
 
-        StopNow();
+        StopNowHard();
         StopAgentHard();
 
         _damageApplied = false;
@@ -593,27 +592,16 @@ public class BloodSnifferAI : MonoBehaviour
         _attackHitAt = Time.time + attackHitDelay;
 
         float fullLen = GetClipLength(clipContains, 0.8f);
-
-        float fraction = 1f;
-        if (sliceComboClips)
-            fraction = _isAttackingWithBite ? biteClipFraction : punchClipFraction;
+        float fraction = sliceComboClips ? (_isAttackingWithBite ? biteClipFraction : punchClipFraction) : 1f;
 
         float window = fullLen * Mathf.Clamp01(fraction);
-
-        // 너무 짧게 끊기면 모션이 안 보이거나 씹힘 방지
         window = Mathf.Max(window, minAttackWindow);
         window = Mathf.Max(window, attackHitDelay + 0.05f);
 
-        // "이 시간까지만 보여주고 끊는다"
         _attackEndAt = Time.time + window;
-
-        // 캔슬 체크는 grace 이후부터
         _attackCanCancelAfter = Time.time + cancelCheckGrace;
 
-        // 실제 lock은 buffer 포함
         LockFor(window + lockExtraBuffer);
-
-        // 다음 공격 가능 시간(부분재생 기준)
         _nextAttackReady = Time.time + window + attackCooldown;
 
         _skipMoveThisFrame = true;
@@ -622,6 +610,7 @@ public class BloodSnifferAI : MonoBehaviour
     void DoAttack()
     {
         _curSpeed = 0f;
+        _targetSpeed = 0f;
         StopAgentHard();
 
         if (playerTarget)
@@ -630,7 +619,6 @@ public class BloodSnifferAI : MonoBehaviour
 
     void TickAttack()
     {
-        // ✅ 공격 도중 플레이어가 멀어지면 캔슬 옵션
         if (cancelAttackIfTargetFar && playerTarget && Time.time >= _attackCanCancelAfter)
         {
             float d = FlatDistance(transform.position, playerTarget.position);
@@ -652,7 +640,6 @@ public class BloodSnifferAI : MonoBehaviour
             TryApplyDamage();
         }
 
-        // ✅ 부분재생(1/4, 1/3) 끝났으면 locomotion으로 강제 복귀
         if (sliceComboClips && Time.time >= _attackEndAt)
         {
             EndAttackToChase();
@@ -662,17 +649,15 @@ public class BloodSnifferAI : MonoBehaviour
 
     void CancelAttackToChase()
     {
-        // 데미지는 안 들어간 상태면 그냥 캔슬.
-        // 이미 데미지가 들어갔어도 "추격으로 복귀"는 동일하게 처리.
         ResetAttackTriggers();
         ForceLocomotionNow();
         _state = State.StandChase;
 
-        // 캔슬 직후 바로 재공격 방지
         _nextAttackReady = Mathf.Max(_nextAttackReady, Time.time + cancelCooldown);
 
         _lockUntil = 0f;
         _curSpeed = 0f;
+        _targetSpeed = 0f;
         _ignoreBusyUntil = Time.time + 0.2f;
         _skipMoveThisFrame = true;
     }
@@ -685,6 +670,7 @@ public class BloodSnifferAI : MonoBehaviour
 
         _lockUntil = 0f;
         _curSpeed = 0f;
+        _targetSpeed = 0f;
         _ignoreBusyUntil = Time.time + 0.2f;
         _skipMoveThisFrame = true;
     }
@@ -700,9 +686,8 @@ public class BloodSnifferAI : MonoBehaviour
     {
         if (!animator) return;
 
-        int stance = animator.GetInteger(stanceParam); // 1: Stand, 2: Crawl(너 기준)
+        int stance = animator.GetInteger(stanceParam);
         string stateName = (stance == 1) ? standLocomotionState : crouchLocomotionState;
-
         if (string.IsNullOrEmpty(stateName)) return;
 
         animator.CrossFadeInFixedTime(stateName, locomotionCrossFade, 0);
@@ -717,11 +702,23 @@ public class BloodSnifferAI : MonoBehaviour
 
         int damage = _isAttackingWithBite ? biteDamage : punchDamage;
 
+        // IDamageable 인터페이스 체크 (우선순위 1)
         var dmg = playerTarget.GetComponentInParent<IDamageable>();
-        if (dmg != null) { dmg.TakeDamage(damage); return; }
+        if (dmg != null)
+        {
+            dmg.TakeDamage(damage, gameObject);
+            return;
+        }
 
+        // Health 컴포넌트 체크 (우선순위 2)
         var hp = playerTarget.GetComponentInParent<Health>();
-        if (hp != null) hp.TakeDamage(damage);
+        if (hp != null)
+        {
+            hp.TakeDamage(damage, gameObject);
+            return;
+        }
+
+        Debug.LogWarning($"{name}: Target {playerTarget.name} has no IDamageable or Health component!");
     }
 
     void DoEating()
@@ -735,7 +732,7 @@ public class BloodSnifferAI : MonoBehaviour
         float d = Vector3.Distance(transform.position, _currentMeat.position);
         if (d <= meatArriveDistance)
         {
-            StopNow();
+            StopNowHard();
             StopAgentHard();
             FaceTarget(_currentMeat.position, crawlTurnSpeed);
 
@@ -752,7 +749,7 @@ public class BloodSnifferAI : MonoBehaviour
             return;
         }
 
-        MoveTowards(_currentMeat.position, crawlSpeed, crawlAcceleration, meatArriveDistance, crawlTurnSpeed);
+        MoveTowards(_currentMeat.position, crawlSpeed, crawlAcceleration, crawlDeceleration, meatArriveDistance, crawlTurnSpeed);
     }
 
     public void NotifyDamaged()
@@ -768,7 +765,7 @@ public class BloodSnifferAI : MonoBehaviour
         animator.ResetTrigger(punchTrigger);
         animator.ResetTrigger(biteTrigger);
 
-        StopNow();
+        StopNowHard();
         StopAgentHard();
 
         FireTrigger(damageTrigger);
@@ -778,10 +775,54 @@ public class BloodSnifferAI : MonoBehaviour
         _skipMoveThisFrame = true;
     }
 
-    void StopNow()
+    // ✅ 즉시 정지(공격/피격/포효 같은 “딱 멈추는” 액션용)
+    void StopNowHard()
     {
         _curSpeed = 0f;
         _targetSpeed = 0f;
+    }
+
+    // ✅ 부드러운 정지(배회/정지 전환용)
+    void RequestStopSoft(float decel)
+    {
+        _targetSpeed = 0f;
+        _curSpeed = Mathf.MoveTowards(_curSpeed, 0f, Mathf.Max(0.01f, decel) * Time.deltaTime);
+
+        if (useNavMesh && agent && agent.enabled)
+        {
+            if (agent.isOnNavMesh)
+            {
+                agent.isStopped = false;
+                agent.speed = _curSpeed;
+                // "현재 위치로" 목적지를 잡아두면, 기존 경로로 밀고 가는 문제 없이 자연스럽게 멈춤
+                agent.SetDestination(transform.position);
+            }
+            else
+            {
+                StopAgentHard();
+            }
+        }
+    }
+
+    void SoftStopByState()
+    {
+        bool hard = (_state == State.Attack || _state == State.Damaged || _state == State.Eating);
+        if (hard)
+        {
+            StopNowHard();
+            StopAgentHard();
+            return;
+        }
+
+        // Crawl이면 crawlDecel, Stand면 standDecel
+        float decel = IsStandStance() ? standChaseDeceleration : crawlDeceleration;
+        RequestStopSoft(decel);
+    }
+
+    bool IsStandStance()
+    {
+        if (!animator) return false;
+        return animator.GetInteger(stanceParam) == 1;
     }
 
     void StopAgentHard()
@@ -797,14 +838,13 @@ public class BloodSnifferAI : MonoBehaviour
         agent.isStopped = false;
     }
 
-    void MoveTowards(Vector3 worldTarget, float maxSpeed, float accel, float stopDistance, float turnSpeedDeg)
+    // ✅ accel/decEL 분리
+    void MoveTowards(Vector3 worldTarget, float maxSpeed, float accel, float decel, float stopDistance, float turnSpeedDeg)
     {
         _targetSpeed = maxSpeed;
 
-        if (_curSpeed < _targetSpeed)
-            _curSpeed = Mathf.Min(_curSpeed + accel * Time.deltaTime, _targetSpeed);
-        else if (_curSpeed > _targetSpeed)
-            _curSpeed = Mathf.Max(_curSpeed - accel * Time.deltaTime, _targetSpeed);
+        float rate = (_curSpeed < _targetSpeed) ? accel : decel;
+        _curSpeed = Mathf.MoveTowards(_curSpeed, _targetSpeed, Mathf.Max(0.01f, rate) * Time.deltaTime);
 
         if (useNavMesh && agent && agent.enabled)
         {
@@ -829,17 +869,15 @@ public class BloodSnifferAI : MonoBehaviour
 
             if (dist <= stopDistance)
             {
-                _curSpeed = Mathf.MoveTowards(_curSpeed, 0f, accel * Time.deltaTime);
+                _targetSpeed = 0f;
+                _curSpeed = Mathf.MoveTowards(_curSpeed, 0f, Mathf.Max(0.01f, decel) * Time.deltaTime);
                 return;
             }
 
             Vector3 dir = to / Mathf.Max(dist, 0.0001f);
 
-            if (dir.sqrMagnitude > 0.0001f)
-            {
-                Quaternion targetRot = Quaternion.LookRotation(dir, Vector3.up);
-                transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRot, turnSpeedDeg * Time.deltaTime);
-            }
+            Quaternion targetRot = Quaternion.LookRotation(dir, Vector3.up);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRot, turnSpeedDeg * Time.deltaTime);
 
             transform.position += transform.forward * (_curSpeed * Time.deltaTime);
         }
@@ -881,8 +919,6 @@ public class BloodSnifferAI : MonoBehaviour
         if (!animator) return;
 
         animator.SetInteger(stanceParam, stance);
-
-        // Stand 상태일 때 Walk 스타일(너 컨트롤러 기준)
         if (stance == 1)
             animator.SetInteger(standWalkStyleParam, 2);
     }
@@ -935,21 +971,17 @@ public class BloodSnifferAI : MonoBehaviour
                          (_state == State.CrawlToScent) ? _crawlToScentSpeed : crawlSpeed;
 
         float denom = Mathf.Max(0.001f, maxSpeed);
-        float speed01 = Mathf.Clamp01(_curSpeed / denom);
-        animator.SetFloat(speedParam, speed01);
+        float target01 = Mathf.Clamp01(_curSpeed / denom);
+
+        // ✅ 핵심: Speed 파라미터를 댐핑으로 부드럽게
+        animator.SetFloat(speedParam, target01, speedParamDampTime, Time.deltaTime);
 
         if (!driveAnimatorSpeed) return;
 
         float targetAnim = 1f;
-
         if (_state == State.Attack || _state == State.Eating || _state == State.Damaged)
         {
             targetAnim = actionAnimSpeed;
-        }
-        else if (_state == State.CrawlWander || _state == State.CrawlPause)
-        {
-            bool moving = _curSpeed > 0.05f;
-            targetAnim = moving ? 1f : 1f;
         }
         else if (_state == State.CrawlToScent)
         {
@@ -964,7 +996,7 @@ public class BloodSnifferAI : MonoBehaviour
                 float t = (_standChaseSpeed - standChaseSpeed) /
                           Mathf.Max(0.001f, standChaseMaxSpeed - standChaseSpeed);
                 float runSpeed = Mathf.Lerp(standWalkAnimSpeed, standRunAnimSpeed, t);
-                targetAnim = Mathf.Lerp(1f, runSpeed, speed01);
+                targetAnim = Mathf.Lerp(1f, runSpeed, target01);
             }
             else targetAnim = 1f;
         }

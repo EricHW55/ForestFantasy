@@ -532,11 +532,23 @@ public class OneEyeAI : MonoBehaviour
         float d = FlatDistance(transform.position, playerTarget.position);
         if (d > attackHitRadius) return;
 
+        // IDamageable 인터페이스 체크 (우선순위 1)
         var dmg = playerTarget.GetComponentInParent<IDamageable>();
-        if (dmg != null) { dmg.TakeDamage(attackDamage); return; }
+        if (dmg != null)
+        {
+            dmg.TakeDamage(attackDamage, gameObject);
+            return;
+        }
 
+        // Health 컴포넌트 체크 (우선순위 2)
         var hp = playerTarget.GetComponentInParent<Health>();
-        if (hp != null) hp.TakeDamage(attackDamage);
+        if (hp != null)
+        {
+            hp.TakeDamage(attackDamage, gameObject);
+            return;
+        }
+
+        Debug.LogWarning($"{name}: Target {playerTarget.name} has no IDamageable or Health component!");
     }
 
     public void NotifyDamaged()

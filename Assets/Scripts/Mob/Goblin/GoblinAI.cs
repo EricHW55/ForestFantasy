@@ -52,7 +52,16 @@ public class GoblinAI : MonoBehaviour
     public float dialogueTurnSpeed = 360f;
 
     [Header("Combat")]
-    public float attackRange = 2.2f;
+    // 실제 데미지가 들어가는 범위 (가장 넓음)
+    public float attackHitRange = 2.5f;
+
+    // 공격 시작 판정 거리 (이 안에 들어오면 공격 시도)
+    public float attackStartRange = 1.5f;
+
+    // 공격 전 멈추는 거리 (이 거리까지 다가가서 멈춤)
+    public float attackStopRange = 0.8f;
+
+    public int attackDamage = 5; 
     public float attackCooldown = 0.5f;
     [Range(0f, 1f)] public float firstAttackRunChance = 0.35f;
     [Range(0f, 1f)] public float jumpBackChance = 0.4f;
@@ -473,7 +482,7 @@ public class GoblinAI : MonoBehaviour
         }
 
         float dist = Vector3.Distance(transform.position, player.position);
-        if (dist <= attackRange)
+        if (dist <= attackStopRange)
         {
             animator.SetBool(HashIsCrouch, false);
             AcquireTarget();
@@ -498,14 +507,37 @@ public class GoblinAI : MonoBehaviour
 
         float dist = Vector3.Distance(transform.position, player.position);
 
-        // 공격 범위
-        if (dist <= attackRange && Time.time >= _nextAttackTime)
+        // 1단계: attackStopRange보다 가까우면 멈춤
+        if (dist <= attackStopRange)
         {
-            TryAttack(forceRunAttack: false);
+            agent.velocity = Vector3.zero;
+            _currentSpeed = 0f;
+            FaceToTarget(player.position, turnSpeed);
+            
+            // 멈춘 상태에서 공격 가능하면 공격
+            if (Time.time >= _nextAttackTime)
+            {
+                TryAttack(forceRunAttack: false);
+            }
+            return;
+        }
+        
+        // 2단계: attackStartRange 안이면 천천히 다가가면서 공격 준비
+        if (dist <= attackStartRange)
+        {
+            // 공격 범위 안에 들어왔지만 아직 attackStopRange까지는 안 감
+            // → 천천히 다가가기
+            MoveTo(player.position, walkSpeed); // 느리게 접근
+            
+            // 공격 가능하면 공격 (다가가는 중에도 공격 가능)
+            if (Time.time >= _nextAttackTime)
+            {
+                TryAttack(forceRunAttack: false);
+            }
             return;
         }
 
-        // 추격
+        // 3단계: 멀리 있으면 빠르게 추격
         float speed = (dist > 10f) ? sprintSpeed : runSpeed;
         MoveTo(player.position, speed);
     }
@@ -515,7 +547,7 @@ public class GoblinAI : MonoBehaviour
         if (!player) return;
 
         agent.velocity = Vector3.zero;
-        _currentSpeed = 0f; // 공격 시 속도 초기화
+        _currentSpeed = 0f;
 
         int id = PickAttackId(forceRunAttack);
         
@@ -528,11 +560,42 @@ public class GoblinAI : MonoBehaviour
 
         _nextAttackTime = Time.time + lockTime + attackCooldown;
 
+        // 피해 적용 추가 (애니메이션 중간에 발동)
+        Invoke(nameof(ApplyAttackDamage), lockTime * 0.3f);
+
         // JumpBack 예약
         if (!forceRunAttack && Random.value < jumpBackChance)
         {
             Invoke(nameof(DelayedJumpBack), lockTime * 0.7f);
         }
+    }
+
+    private void ApplyAttackDamage()
+    {
+        if (!player) return;
+        if (_state != State.Locked) return;
+
+        float d = Vector3.Distance(transform.position, player.position);
+        // attackHitRange 사용: 실제 데미지 범위
+        if (d > attackHitRange) return; // 공격 범위보다 약간 넓게
+
+        // IDamageable 인터페이스 체크 (우선순위 1)
+        var dmg = player.GetComponentInParent<IDamageable>();
+        if (dmg != null)
+        {
+            dmg.TakeDamage(attackDamage, gameObject);
+            return;
+        }
+
+        // Health 컴포넌트 체크 (우선순위 2)
+        var hp = player.GetComponentInParent<Health>();
+        if (hp != null)
+        {
+            hp.TakeDamage(attackDamage, gameObject);
+            return;
+        }
+
+        Debug.LogWarning($"{name}: Target {player.name} has no IDamageable or Health component!");
     }
 
     private void DelayedJumpBack()
@@ -860,14 +923,28 @@ public class GoblinAI : MonoBehaviour
         Gizmos.color = new Color(1f, 0.85f, 0.2f, 0.25f);
         Gizmos.DrawWireSphere(transform.position, viewRange);
 
-        Gizmos.color = new Color(1f, 0.2f, 0.2f, 0.25f);
-        Gizmos.DrawWireSphere(transform.position, attackRange);
+        // ✅ 1. 데미지 범위 (빨간색, 가장 넓음)
+        Gizmos.color = new Color(1f, 0f, 0f, 0.2f);
+        Gizmos.DrawWireSphere(transform.position, attackHitRange);
+        Gizmos.DrawWireCube(transform.position + Vector3.up * 0.1f, Vector3.one * 0.3f);
+        
+        // ✅ 2. 공격 시작 범위 (주황색, 중간)
+        Gizmos.color = new Color(1f, 0.5f, 0f, 0.4f);
+        Gizmos.DrawWireSphere(transform.position, attackStartRange);
+        
+        // ✅ 3. 멈추는 거리 (노란색, 가장 가까움)
+        Gizmos.color = new Color(1f, 1f, 0f, 0.6f);
+        Gizmos.DrawWireSphere(transform.position, attackStopRange);
+        Gizmos.DrawLine(transform.position, transform.position + transform.forward * attackStopRange);
 
+        // 시야각
         Vector3 left = Quaternion.Euler(0f, -viewAngle * 0.5f, 0f) * transform.forward;
         Vector3 right = Quaternion.Euler(0f, viewAngle * 0.5f, 0f) * transform.forward;
 
         Gizmos.color = new Color(1f, 0.9f, 0.1f, 0.8f);
-        Gizmos.DrawLine(transform.position + Vector3.up * 1.2f, transform.position + Vector3.up * 1.2f + left * viewRange);
-        Gizmos.DrawLine(transform.position + Vector3.up * 1.2f, transform.position + Vector3.up * 1.2f + right * viewRange);
+        Gizmos.DrawLine(transform.position + Vector3.up * 1.2f, 
+                        transform.position + Vector3.up * 1.2f + left * viewRange);
+        Gizmos.DrawLine(transform.position + Vector3.up * 1.2f, 
+                        transform.position + Vector3.up * 1.2f + right * viewRange);
     }
 }
