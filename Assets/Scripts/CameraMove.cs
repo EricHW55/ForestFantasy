@@ -1,13 +1,18 @@
 using UnityEngine;
 
+[RequireComponent(typeof(Camera))]
 public class FollowPlayer : MonoBehaviour
 {
     [Header("Target")]
-    public Transform player;      // Inspector에 드래그 추천
+    public Transform player;
+
+    [Tooltip("headAnchor를 못 찾았을 때 fallback으로 쓰는 오프셋(플레이어 루트 기준)")]
     public Vector3 headOffset = new Vector3(0f, 1.7f, 0f);
 
     [Header("View")]
     public bool thirdPerson = true;
+    public KeyCode toggleKey = KeyCode.V;
+
     public float distance = 4f;
     public float thirdPersonHeight = 1.2f;
 
@@ -19,11 +24,31 @@ public class FollowPlayer : MonoBehaviour
     [Header("Smoothing")]
     public float smoothTime = 0.06f;
 
+    [Header("First Person Anchor")]
+    [Tooltip("비워두면 자동으로 Humanoid Head bone을 찾아서 사용")]
+    public Transform headAnchor;
+
+    [Tooltip("Head 기준으로 미세 오프셋(눈 높이/살짝 앞). Z를 0.05~0.12 주면 몸통/머리 클리핑이 크게 줄어듦")]
+    public Vector3 headLocalOffset = new Vector3(0f, 0.02f, 0.08f);
+
+    [Header("First Person Rendering (Camera-only)")]
+    public bool hideBodyInFirstPerson = true;
+    public string bodyLayerName = "PlayerBody";
+
     private float pitch;
     private Vector3 smoothVel;
 
+    private Camera cam;
+    private int bodyLayer;
+    private int bodyBit;
+
+    private Animator playerAnimator;
+    private Transform cachedPlayer; // 플레이어 바뀌는 경우 대비
+
     void Start()
     {
+        cam = GetComponent<Camera>();
+
         if (player == null)
         {
             var go = GameObject.FindWithTag("Player");
@@ -37,16 +62,32 @@ public class FollowPlayer : MonoBehaviour
             return;
         }
 
+        // Layer bit 준비
+        bodyLayer = LayerMask.NameToLayer(bodyLayerName);
+        if (hideBodyInFirstPerson && bodyLayer < 0)
+        {
+            Debug.LogWarning($"[FollowPlayer] Layer '{bodyLayerName}'를 못 찾았어. Layers에 추가해줘.");
+        }
+        bodyBit = (bodyLayer >= 0) ? (1 << bodyLayer) : 0;
+
+        CachePlayerRefs(force: true);
+        ApplyCullingMask();
+
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.V))
-            thirdPerson = !thirdPerson;
+        // (플레이어가 런타임에 바뀌는 경우 대비)
+        CachePlayerRefs(force: false);
 
-        // Mouse Y only -> pitch
+        if (Input.GetKeyDown(toggleKey))
+        {
+            thirdPerson = !thirdPerson;
+            ApplyCullingMask();
+        }
+
         pitch -= Input.GetAxis("Mouse Y") * mouseSensitivityY;
         pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
     }
@@ -59,25 +100,59 @@ public class FollowPlayer : MonoBehaviour
         Quaternion rot = Quaternion.Euler(pitch, yaw, 0f);
 
         Vector3 desiredPos;
+
         if (thirdPerson)
         {
-            // 플레이어 뒤쪽 + 위쪽
             desiredPos = player.position
                        + Vector3.up * thirdPersonHeight
                        + (rot * new Vector3(0f, 0f, -distance));
         }
         else
         {
-            // 1인칭(머리 위치)
-            desiredPos = player.position + headOffset;
+            // ✅ 1인칭: headAnchor 우선, 없으면 headOffset fallback
+            if (headAnchor != null)
+            {
+                // headLocalOffset은 headAnchor의 로컬(전방 포함) 기준으로 적용
+                desiredPos = headAnchor.position + headAnchor.TransformDirection(headLocalOffset);
+            }
+            else
+            {
+                desiredPos = player.position + headOffset;
+            }
         }
 
         transform.position = Vector3.SmoothDamp(transform.position, desiredPos, ref smoothVel, smoothTime);
+        transform.rotation = rot;
+    }
 
-        // 바라보는 방향
+    /// <summary>
+    /// headAnchor 자동 찾기(Head bone) + 플레이어 변경 감지
+    /// </summary>
+    private void CachePlayerRefs(bool force)
+    {
+        if (!force && cachedPlayer == player) return;
+
+        cachedPlayer = player;
+
+        // Animator 캐싱
+        playerAnimator = (player != null) ? player.GetComponentInChildren<Animator>() : null;
+
+        // headAnchor가 비어있으면 Humanoid Head bone 자동 설정
+        if (headAnchor == null && playerAnimator != null && playerAnimator.isHuman)
+        {
+            Transform head = playerAnimator.GetBoneTransform(HumanBodyBones.Head);
+            if (head != null)
+                headAnchor = head;
+        }
+    }
+
+    private void ApplyCullingMask()
+    {
+        if (!hideBodyInFirstPerson || cam == null || bodyLayer < 0) return;
+
         if (thirdPerson)
-            transform.rotation = rot;          // 3인칭: pitch+yaw 그대로
+            cam.cullingMask |= bodyBit;        // 3인칭: 보이게
         else
-            transform.rotation = rot;          // 1인칭도 동일 (필요하면 roll 0 유지)
+            cam.cullingMask &= ~bodyBit;       // 1인칭: 카메라에서만 숨김
     }
 }
